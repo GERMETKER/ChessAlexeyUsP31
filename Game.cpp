@@ -1,30 +1,32 @@
 #include "Game.hpp"
 #include "Frames.hpp"
 #include "Button.hpp"
-using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать sf::
+using namespace sf;//РІРєР»СЋС‡Р°РµРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ РёРјРµРЅ sf, С‡С‚РѕР±С‹ РїРѕСЃС‚РѕСЏРЅРЅРѕ РЅРµ РїРёСЃР°С‚СЊ sf::
 Point Box[height][length];
 Frames Places[height][length];
 MoveWay Ways[height][length];
 bool WhKingInDang = false;
 bool BlKingInDang = false;
 int kingWay = 0;
-sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Window"); //увеличили для удобства размер окна
+sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Window"); //СѓРІРµР»РёС‡РёР»Рё РґР»СЏ СѓРґРѕР±СЃС‚РІР° СЂР°Р·РјРµСЂ РѕРєРЅР°
 int figure = -1;
 int bestPuwn = -1;
 int schet = 1;
+bool check = false;
+
  void Game::CrChessDesk()
 {
-	//Render window(sf::VideoMode(1920, 1080), "SFML Window"); //увеличили для удобства размер окна
+	//Render window(sf::VideoMode(1920, 1080), "SFML Window"); //СѓРІРµР»РёС‡РёР»Рё РґР»СЏ СѓРґРѕР±СЃС‚РІР° СЂР°Р·РјРµСЂ РѕРєРЅР°
 	RenderWindow& win2 = window;
-	Image heroimage; //создаем объект Image (изображение)
-	heroimage.loadFromFile("ChessDesk.png");//загружаем в него файл
+	Image heroimage; //СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёРµ)
+	heroimage.loadFromFile("ChessDesk.png");//Р·Р°РіСЂСѓР¶Р°РµРј РІ РЅРµРіРѕ С„Р°Р№Р»
 
-	Texture herotexture;//создаем объект Texture (текстура)
-	herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+	Texture herotexture;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂР°)
+	herotexture.loadFromImage(heroimage);//РїРµСЂРµРґР°РµРј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)
 
-	Sprite herosprite;//создаем объект Sprite(спрайт)
-	herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-	herosprite.setPosition(510, 25);//задаем начальные координаты появления спрайта
+	Sprite herosprite;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Sprite(СЃРїСЂР°Р№С‚)
+	herosprite.setTexture(herotexture);//РїРµСЂРµРґР°С‘Рј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂС‹)
+	herosprite.setPosition(510, 25);//Р·Р°РґР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕСЏРІР»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
 
 	while (window.isOpen())
 	{
@@ -32,7 +34,7 @@ int schet = 1;
 		{
 			Vector2i mousePos = Mouse::getPosition(window);
 			window.clear(Color::White);
-			window.draw(herosprite);//выводим спрайт на экран
+			window.draw(herosprite);//РІС‹РІРѕРґРёРј СЃРїСЂР°Р№С‚ РЅР° СЌРєСЂР°РЅ
 			WrMove();
 			Shah();
 			CanDeath();
@@ -59,6 +61,10 @@ int schet = 1;
 					}
 				}
 			}
+			if (check)
+			{
+				WrCheck();
+			}
 			IfChoose(mousePos);
 			window.display();
 			for (int i = 0; i < height; i++)
@@ -79,36 +85,37 @@ int schet = 1;
 			if (BlCheckmate)
 			{
 				
-				Font font;//шрифт 
-				font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-				Text text("", font, 200);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+				Font font;//С€СЂРёС„С‚ 
+				font.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+				Text text("", font, 200);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 				text.setFillColor(sf::Color::Black);
-				text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-				text.setString("Black Won");//задает строку тексту
-				text.setPosition(375, 100);//задаем позицию текста, центр камеры
-				Image revImage; //создаем объект Image (изображение)
-				revImage.loadFromFile("Revard.png");//загружаем в него файл
-				Texture revTexture;//создаем объект Texture (текстура)
-				revTexture.loadFromImage(revImage);//передаем в него объект Image (изображения)
-				Sprite revSprite;//создаем объект Sprite(спрайт)
-				revSprite.setTexture(revTexture);//передаём в него объект Texture (текстуры)
-				revSprite.setPosition(810, 500);//задаем начальные координаты появления спрайта
+				text.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+				text.setString("Black Won");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+				text.setPosition(375, 100);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+				Image revImage; //СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёРµ)
+				revImage.loadFromFile("Revard.png");//Р·Р°РіСЂСѓР¶Р°РµРј РІ РЅРµРіРѕ С„Р°Р№Р»
+				Texture revTexture;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂР°)
+				revTexture.loadFromImage(revImage);//РїРµСЂРµРґР°РµРј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)
+				Sprite revSprite;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Sprite(СЃРїСЂР°Р№С‚)
+				revSprite.setTexture(revTexture);//РїРµСЂРµРґР°С‘Рј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂС‹)
+				revSprite.setPosition(810, 500);//Р·Р°РґР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕСЏРІР»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
 				sf::RectangleShape shape(sf::Vector2f(250, 150));
 				shape.setPosition(100, 800);
 				shape.setFillColor(Color::White);
 				window.draw(shape);
-				Font exfont;//шрифт 
-				exfont.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-				Text extext("", exfont, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+				Font exfont;//С€СЂРёС„С‚ 
+				exfont.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+				Text extext("", exfont, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 				extext.setFillColor(sf::Color::Black);
-				extext.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-				extext.setString("Exit");//задает строку тексту
-				extext.setPosition(100, 800);//задаем позицию текста, центр камеры
-				window.draw(extext);//рисую этот текст
-				window.draw(herosprite);//выводим спрайт на экран
-				window.draw(revSprite);//рисую этот текст
-				window.draw(extext);//рисую этот текст
-				window.draw(text);//рисую этот текст
+				extext.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+				extext.setString("Exit");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+				extext.setPosition(100, 800);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+				window.draw(extext);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
+				window.draw(herosprite);//РІС‹РІРѕРґРёРј СЃРїСЂР°Р№С‚ РЅР° СЌРєСЂР°РЅ
+				window.draw(revSprite);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
+				window.draw(extext);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
+				window.draw(text);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
+				window.display();
 				if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
 				{
 					window.close();
@@ -117,43 +124,42 @@ int schet = 1;
 			else if (WhCheckmate)
 			{
 				
-				Font font;//шрифт 
-				font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-				Text text("", font, 200);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+				Font font;//С€СЂРёС„С‚ 
+				font.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+				Text text("", font, 200);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 				text.setFillColor(sf::Color::Black);
-				text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-				text.setString("White Won");//задает строку тексту
-				text.setPosition(375, 100);//задаем позицию текста, центр камеры
-				Image revImage; //создаем объект Image (изображение)
-				revImage.loadFromFile("Revard.png");//загружаем в него файл
-				Texture revTexture;//создаем объект Texture (текстура)
-				revTexture.loadFromImage(revImage);//передаем в него объект Image (изображения)
-				Sprite revSprite;//создаем объект Sprite(спрайт)
-				revSprite.setTexture(revTexture);//передаём в него объект Texture (текстуры)
-				revSprite.setPosition(810, 500);//задаем начальные координаты появления спрайта
+				text.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+				text.setString("White Won");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+				text.setPosition(375, 100);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+				Image revImage; //СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёРµ)
+				revImage.loadFromFile("Revard.png");//Р·Р°РіСЂСѓР¶Р°РµРј РІ РЅРµРіРѕ С„Р°Р№Р»
+				Texture revTexture;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂР°)
+				revTexture.loadFromImage(revImage);//РїРµСЂРµРґР°РµРј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)
+				Sprite revSprite;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Sprite(СЃРїСЂР°Р№С‚)
+				revSprite.setTexture(revTexture);//РїРµСЂРµРґР°С‘Рј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂС‹)
+				revSprite.setPosition(810, 500);//Р·Р°РґР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕСЏРІР»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
 				sf::RectangleShape shape(sf::Vector2f(250, 150));
 				shape.setPosition(100, 800);
 				shape.setFillColor(Color::White);
 				window.draw(shape);
-				Font exfont;//шрифт 
-				exfont.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-				Text extext("", exfont, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+				Font exfont;//С€СЂРёС„С‚ 
+				exfont.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+				Text extext("", exfont, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 				extext.setFillColor(sf::Color::Black);
-				extext.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-				extext.setString("Exit");//задает строку тексту
-				extext.setPosition(100, 800);//задаем позицию текста, центр камеры
-				window.draw(extext);//рисую этот текст
-				window.draw(herosprite);//выводим спрайт на экран
-				window.draw(revSprite);//рисую этот текст
-				window.draw(extext);//рисую этот текст
-				window.draw(text);//рисую этот текст
+				extext.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+				extext.setString("Exit");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+				extext.setPosition(100, 800);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+				window.draw(extext);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
+				window.draw(herosprite);//РІС‹РІРѕРґРёРј СЃРїСЂР°Р№С‚ РЅР° СЌРєСЂР°РЅ
+				window.draw(revSprite);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
+				window.draw(extext);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
+				window.draw(text);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
+				window.display();
 				if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
 				{			
 					window.close();
 				}
-
 			}
-			window.display();
 		}
 	}
 }
@@ -412,85 +418,31 @@ void Game::CrPoints()
 
 void Game::CrSprites(Vector2i mousePos)
 {
-	if (!WhKingInDang && !BlKingInDang)
+	for (int i = 0; i < height; i++)
 	{
-		for (int i = 0; i < height; i++)
+		for (int j = 0; j < length; j++)
 		{
-			for (int j = 0; j < length; j++)
+			Image heroimage; //СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёРµ)
+			heroimage.loadFromFile(Box[i][j].name);//Р·Р°РіСЂСѓР¶Р°РµРј РІ РЅРµРіРѕ С„Р°Р№Р»
+			//Box[i][j].image = heroimage;
+			Texture herotexture;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂР°)
+			herotexture.loadFromImage(heroimage);//РїРµСЂРµРґР°РµРј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)
+			//Box[i][j].texture = herotexture;
+			Sprite herosprite;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Sprite(СЃРїСЂР°Р№С‚)
+			herosprite.setTexture(herotexture);//РїРµСЂРµРґР°С‘Рј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂС‹)
+			herosprite.setPosition(Box[i][j].sizeX, Box[i][j].sizeY);//Р·Р°РґР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕСЏРІР»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
+			//Box[i][j].sprite = herosprite;
+			window.draw(herosprite);//РІС‹РІРѕРґРёРј СЃРїСЂР°Р№С‚ РЅР° СЌРєСЂР°РЅ
+			if (Box[i][j].color == MakeMove)
 			{
-				Image heroimage; //создаем объект Image (изображение)
-				heroimage.loadFromFile(Box[i][j].name);//загружаем в него файл
-				//Box[i][j].image = heroimage;
-				Texture herotexture;//создаем объект Texture (текстура)
-				herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-				//Box[i][j].texture = herotexture;
-				Sprite herosprite;//создаем объект Sprite(спрайт)
-				herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-				herosprite.setPosition(Box[i][j].sizeX, Box[i][j].sizeY);//задаем начальные координаты появления спрайта
-				//Box[i][j].sprite = herosprite;
-				window.draw(herosprite);//выводим спрайт на экран
-				if (Box[i][j].color == MakeMove)
-				{
-					if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
-					{
-						figure = Box[i][j].sumKord;
-					}
-					else
-					{
-						continue;
-					}
-				}
-			}
-		}
-	}
-	if (WhKingInDang)
-	{
-		for (int i = 0; i < height; i++)
-		{
-			for (int j = 0; j < length; j++)
-			{
-				Image heroimage; //создаем объект Image (изображение)
-				heroimage.loadFromFile(Box[i][j].name);//загружаем в него файл
-				//Box[i][j].image = heroimage;
-				Texture herotexture;//создаем объект Texture (текстура)
-				herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-				//Box[i][j].texture = herotexture;
-				Sprite herosprite;//создаем объект Sprite(спрайт)
-				herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-				herosprite.setPosition(Box[i][j].sizeX, Box[i][j].sizeY);//задаем начальные координаты появления спрайта
-				//Box[i][j].sprite = herosprite;
-				window.draw(herosprite);//выводим спрайт на экран
-				if (Box[i][j].name == "WhKing.png")
+
+				if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
 				{
 					figure = Box[i][j].sumKord;
-					Time = 1;
-					MakeMove = Time;
 				}
-			}
-		}
-	}
-	else if (BlKingInDang)
-	{
-		for (int i = 0; i < height; i++)
-		{
-			for (int j = 0; j < length; j++)
-			{
-				Image heroimage; //создаем объект Image (изображение)
-				heroimage.loadFromFile(Box[i][j].name);//загружаем в него файл
-				//Box[i][j].image = heroimage;
-				Texture herotexture;//создаем объект Texture (текстура)
-				herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-				//Box[i][j].texture = herotexture;
-				Sprite herosprite;//создаем объект Sprite(спрайт)
-				herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-				herosprite.setPosition(Box[i][j].sizeX, Box[i][j].sizeY);//задаем начальные координаты появления спрайта
-				//Box[i][j].sprite = herosprite;
-				window.draw(herosprite);//выводим спрайт на экран
-				if (Box[i][j].name == "BlKing.png")
+				else
 				{
-					figure = Box[i][j].sumKord;
-					Time = -1;
-					MakeMove = Time;
+					continue;
 				}
 			}
 		}
@@ -505,16 +457,16 @@ void Game::SetFrame()
 			Places[i][j].name = "YeFrame.png";
 			Places[i][j].sizeX = Box[i][j].sizeX;
 			Places[i][j].sizeY = Box[i][j].sizeY;
-			Image heroimage; //создаем объект Image (изображение)
-			heroimage.loadFromFile(Places[i][j].name);//загружаем в него файл
-			Texture herotexture;//создаем объект Texture (текстура)
-			herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-			Sprite herosprite;//создаем объект Sprite(спрайт)
-			herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-			herosprite.setPosition(Places[i][j].sizeX, Places[i][j].sizeY + 3);//задаем начальные координаты появления спрайта
+			Image heroimage; //СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёРµ)
+			heroimage.loadFromFile(Places[i][j].name);//Р·Р°РіСЂСѓР¶Р°РµРј РІ РЅРµРіРѕ С„Р°Р№Р»
+			Texture herotexture;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂР°)
+			herotexture.loadFromImage(heroimage);//РїРµСЂРµРґР°РµРј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)
+			Sprite herosprite;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Sprite(СЃРїСЂР°Р№С‚)
+			herosprite.setTexture(herotexture);//РїРµСЂРµРґР°С‘Рј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂС‹)
+			herosprite.setPosition(Places[i][j].sizeX, Places[i][j].sizeY + 3);//Р·Р°РґР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕСЏРІР»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
 			if (Box[i][j].choose)
 			{
-				window.draw(herosprite);//выводим спрайт на экран
+				window.draw(herosprite);//РІС‹РІРѕРґРёРј СЃРїСЂР°Р№С‚ РЅР° СЌРєСЂР°РЅ
 			}
 		}
 	}
@@ -523,32 +475,32 @@ void Game::WrMove()
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	Font font;//шрифт 
-	font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-	Text text("", font, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+	Font font;//С€СЂРёС„С‚ 
+	font.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+	Text text("", font, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 	text.setFillColor(sf::Color::Black);
-	text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
+	text.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
 	if (Time > 0)
 	{
-		text.setString("Move:\nWhite");//задает строку тексту
+		text.setString("Move:\nWhite");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
 	}
 	else if (Time < 0)
 	{
-		text.setString("Move:\nBlack");//задает строку тексту
+		text.setString("Move:\nBlack");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
 	}
 	
-	text.setPosition(100, 50);//задаем позицию текста, центр камеры
-	window.draw(text);//рисую этот текст
+	text.setPosition(100, 50);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+	window.draw(text);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
 }
 void Game::WrFigure()
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	Font font;//шрифт 
-	font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-	Text text("", font, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+	Font font;//С€СЂРёС„С‚ 
+	font.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+	Text text("", font, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 	text.setFillColor(sf::Color::Black);
-	text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
+	text.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
 
 	for (int i = 0; i < height; i++)
 	{
@@ -558,34 +510,34 @@ void Game::WrFigure()
 			{
 				if (Box[i][j].name == "BlTower.png" || Box[i][j].name == "WhTower.png")
 				{
-					text.setString("Choose:\nRook");//задает строку тексту
+					text.setString("Choose:\nRook");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
 				}
 				else if (Box[i][j].name == "BlHorse.png" || Box[i][j].name == "WhHorse.png")
 				{
-					text.setString("Choose:\nKnight");//задает строку тексту
+					text.setString("Choose:\nKnight");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
 				}
 				else if (Box[i][j].name == "BlPuwn.png" || Box[i][j].name == "WhPuwn.png")
 				{
-					text.setString("Choose:\nPuwn");//задает строку тексту
+					text.setString("Choose:\nPuwn");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
 				}
 				else if (Box[i][j].name == "BlBishop.png" || Box[i][j].name == "WhBishop.png")
 				{
-					text.setString("Choose:\nBishop");//задает строку тексту
+					text.setString("Choose:\nBishop");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
 				}
 				else if (Box[i][j].name == "BlKing.png" || Box[i][j].name == "WhKing.png")
 				{
-					text.setString("Choose:\nKing");//задает строку тексту
+					text.setString("Choose:\nKing");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
 				}
 				else if (Box[i][j].name == "BlQueen.png" || Box[i][j].name == "WhQueen.png")
 				{
-					text.setString("Choose:\nQueen");//задает строку тексту
+					text.setString("Choose:\nQueen");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
 				}
 			}
 		}
 	}
 
-	text.setPosition(100, 300);//задаем позицию текста, центр камеры
-	window.draw(text);//рисую этот текст
+	text.setPosition(100, 300);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+	window.draw(text);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
 }
 void Game::IfChoose(Vector2i mousePos)
 {
@@ -604,14 +556,14 @@ void Game::IfChoose(Vector2i mousePos)
 					shape.setPosition(1470, 60);
 					shape.setFillColor(Color::White);
 					window.draw(shape);
-					Font font;//шрифт 
-					font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-					Text text("", font, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+					Font font;//С€СЂРёС„С‚ 
+					font.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+					Text text("", font, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 					text.setFillColor(sf::Color::Black);
-					text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-					text.setString("Cansel");//задает строку тексту
-					text.setPosition(1500, 60);//задаем позицию текста, центр камеры
-					window.draw(text);//рисую этот текст
+					text.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+					text.setString("Cansel");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+					text.setPosition(1500, 60);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+					window.draw(text);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
 					if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
 					{
 						Box[i][j].choose = false;
@@ -624,14 +576,14 @@ void Game::IfChoose(Vector2i mousePos)
 						//shape.setPosition(1470, 60);
 						//shape.setFillColor(Color::White);
 						//window.draw(shape);
-						//Font font;//шрифт 
-						//font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-						//Text text("", font, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+						//Font font;//С€СЂРёС„С‚ 
+						//font.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+						//Text text("", font, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 						//text.setFillColor(sf::Color::Black);
-						//text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-						//text.setString("Cansel");//задает строку тексту
-						//text.setPosition(1500, 60);//задаем позицию текста, центр камеры
-						//window.draw(text);//рисую этот текст
+						//text.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+						//text.setString("Cansel");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+						//text.setPosition(1500, 60);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+						//window.draw(text);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
 						CrWays(mousePos);
 					}
 				}
@@ -641,17 +593,27 @@ void Game::IfChoose(Vector2i mousePos)
 					shape.setPosition(1470, 60);
 					shape.setFillColor(Color::White);
 					window.draw(shape);
-					Font font;//шрифт 
-					font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-					Text text("", font, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+					Font font;//С€СЂРёС„С‚ 
+					font.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+					Text text("", font, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 					text.setFillColor(sf::Color::Black);
-					text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-					text.setString("Check\nof the\nKing");//задает строку тексту
-					text.setPosition(1500, 60);//задаем позицию текста, центр камеры
-					window.draw(text);//рисую этот текст
-					CrWays(mousePos);
+					text.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+					text.setString("Cansel");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+					text.setPosition(1500, 60);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+					window.draw(text);
+					if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
+					{
+						Box[i][j].choose = false;
+						MakeMove = Time;
+						figure = -1;
+					}
+					else
+					{
+						CrWays(mousePos);
+					}
 					WhKingInDang = false;
 					BlKingInDang = false;
+					check = false;
 				}
 			}
 		}
@@ -1040,50 +1002,37 @@ void Game::CrWays(Vector2i mousePos)
 				}
 				if (Box[i][j].name == "WhKing.png" || Box[i][j].name == "BlKing.png")
 				{
-					kingWay = 0;
 					if (Box[i][j - 1].color != Box[i][j].color)
 					{
-						SelWays(mousePos, i, j, i, j - 1, 1.0f);
+						SelWays(mousePos, i, j, i, j - 1);
 					}
 					if (Box[i][j + 1].color != Box[i][j].color)
 					{
-						SelWays(mousePos, i, j, i, j + 1, 1.0f);
+						SelWays(mousePos, i, j, i, j + 1);
 					}
 					if (Box[i + 1][j + 1].color != Box[i][j].color)
 					{
-						SelWays(mousePos, i, j, i + 1, j + 1, 1.0f);
+						SelWays(mousePos, i, j, i + 1, j + 1);
 					}
 					if (Box[i + 1][j - 1].color != Box[i][j].color)
 					{
-						SelWays(mousePos, i, j, i + 1, j - 1, 1.0f);
+						SelWays(mousePos, i, j, i + 1, j - 1);
 					}
 					if (Box[i - 1][j - 1].color != Box[i][j].color)
 					{
-						SelWays(mousePos, i, j, i - 1, j - 1, 1.0f);
+						SelWays(mousePos, i, j, i - 1, j - 1);
 					}
 					if (Box[i - 1][j + 1].color != Box[i][j].color)
 					{
-						SelWays(mousePos, i, j, i - 1, j + 1, 1.0f);
+						SelWays(mousePos, i, j, i - 1, j + 1);
 					}
 					if (Box[i + 1][j].color != Box[i][j].color)
 					{
-						SelWays(mousePos, i, j, i + 1, j, 1.0f);
+						SelWays(mousePos, i, j, i + 1, j);
 					}
 					if (Box[i - 1][j].color != Box[i][j].color)
 					{
-						SelWays(mousePos, i, j, i - 1, j, 1.0f);
-					}
-					if (kingWay == 0)
-					{
-						if (Box[i][j].color == 1 && WhKingInDang)
-						{
-							BlCheckmate = true;
-							
-						}
-						if (Box[i][j].color == -1 && BlKingInDang)
-						{
-							WhCheckmate = true;
-						}
+						SelWays(mousePos, i, j, i - 1, j);
 					}
 					for (int z = 0; z < height; z++)
 					{
@@ -1286,13 +1235,13 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
 				Ways[x][y].name = "BlFrame.png";
 				Ways[x][y].sizeX = Box[x][y].sizeX;
 				Ways[x][y].sizeY = Box[x][y].sizeY;
-				Image heroimage; //создаем объект Image (изображение)
-				heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-				Texture herotexture;//создаем объект Texture (текстура)
-				herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-				Sprite herosprite;//создаем объект Sprite(спрайт)
-				herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-				herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+				Image heroimage; //СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёРµ)
+				heroimage.loadFromFile(Ways[x][y].name);//Р·Р°РіСЂСѓР¶Р°РµРј РІ РЅРµРіРѕ С„Р°Р№Р»
+				Texture herotexture;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂР°)
+				herotexture.loadFromImage(heroimage);//РїРµСЂРµРґР°РµРј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)
+				Sprite herosprite;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Sprite(СЃРїСЂР°Р№С‚)
+				herosprite.setTexture(herotexture);//РїРµСЂРµРґР°С‘Рј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂС‹)
+				herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//Р·Р°РґР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕСЏРІР»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
 				window.draw(herosprite);
 				if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
 				{
@@ -1329,13 +1278,13 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, double zero)
 			Ways[x][y].name = "BlFrame.png";
 			Ways[x][y].sizeX = Box[x][y].sizeX;
 			Ways[x][y].sizeY = Box[x][y].sizeY;
-			Image heroimage; //создаем объект Image (изображение)
-			heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-			Texture herotexture;//создаем объект Texture (текстура)
-			herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-			Sprite herosprite;//создаем объект Sprite(спрайт)
-			herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-			herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+			Image heroimage; //СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёРµ)
+			heroimage.loadFromFile(Ways[x][y].name);//Р·Р°РіСЂСѓР¶Р°РµРј РІ РЅРµРіРѕ С„Р°Р№Р»
+			Texture herotexture;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂР°)
+			herotexture.loadFromImage(heroimage);//РїРµСЂРµРґР°РµРј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)
+			Sprite herosprite;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Sprite(СЃРїСЂР°Р№С‚)
+			herosprite.setTexture(herotexture);//РїРµСЂРµРґР°С‘Рј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂС‹)
+			herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//Р·Р°РґР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕСЏРІР»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
 			window.draw(herosprite);
 			int n;
 			if (zero == 1.0)
@@ -1393,13 +1342,13 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, std::string ze
 				Ways[x][y].name = "BlFrame.png";
 				Ways[x][y].sizeX = Box[x][y].sizeX;
 				Ways[x][y].sizeY = Box[x][y].sizeY;
-				Image heroimage; //создаем объект Image (изображение)
-				heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-				Texture herotexture;//создаем объект Texture (текстура)
-				herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-				Sprite herosprite;//создаем объект Sprite(спрайт)
-				herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-				herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+				Image heroimage; //СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёРµ)
+				heroimage.loadFromFile(Ways[x][y].name);//Р·Р°РіСЂСѓР¶Р°РµРј РІ РЅРµРіРѕ С„Р°Р№Р»
+				Texture herotexture;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂР°)
+				herotexture.loadFromImage(heroimage);//РїРµСЂРµРґР°РµРј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)
+				Sprite herosprite;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Sprite(СЃРїСЂР°Р№С‚)
+				herosprite.setTexture(herotexture);//РїРµСЂРµРґР°С‘Рј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂС‹)
+				herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//Р·Р°РґР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕСЏРІР»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
 				window.draw(herosprite);
 				if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
 				{
@@ -1423,78 +1372,44 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, int step)
 {
 	if (x < 8 && x > -1 && y < 8 && y > -1)
 	{
-		if (Box[x][y].name == "BlKing.png" && Box[i][j].WhDethNear)
+		if (Box[x][y].name == "BlKing.png" && Box[x][y - step * 2].WhDethNear)
 		{
 			/*MakeMove = Time;
 			figure = -1;*/
 		}
-		else if (Box[x][y].name == "WhKing.png" && Box[i][j].BlDethNear)
+		else if (Box[x][y].name == "WhKing.png" && Box[x][y - step * 2].BlDethNear)
 		{
 			//MakeMove = Time;
 			//figure = -1;
 		}
 		else
 		{
-			Ways[i][j].name = "BlFrame.png";
-			Ways[i][j].sizeX = Box[i][j].sizeX;
-			Ways[i][j].sizeY = Box[i][j].sizeY;
-			Image heroimage; //создаем объект Image (изображение)
-			heroimage.loadFromFile(Ways[i][j].name);//загружаем в него файл
-			Texture herotexture;//создаем объект Texture (текстура)
-			herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-			Sprite herosprite;//создаем объект Sprite(спрайт)
-			herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-			herosprite.setPosition(Ways[i][j].sizeX, Ways[i][j].sizeY);//задаем начальные координаты появления спрайта
-			window.draw(herosprite);
-			if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+			if (Box[x][y].color == 1 && WhKingInDang)
 			{
-				Castling(i, j, x, y, step);
-				for (int g = 0; g < height; g++)
-				{
-					for (int h = 0; h < height; h++)
-					{
-						Box[g][h].TakeOnMove = false;
-					}
-				}
+				//MakeMove = Time;
+				//figure = -1;
 			}
-		}
-	}
-}
-
-void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, float zero)
-{
-	if (x < 8 && x > -1 && y < 8 && y > -1)
-	{
-
-		if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
-		{
-			if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+			else if (Box[x][y].color == -1 && BlKingInDang)
 			{
-				/*MakeMove = Time;
-				figure = -1;*/
-			}
-			else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
-			{
-				/*MakeMove = Time;
-				figure = -1;*/
+				//MakeMove = Time;
+				//figure = -1;
 			}
 			else
 			{
-				kingWay++;
-				Ways[x][y].name = "BlFrame.png";
-				Ways[x][y].sizeX = Box[x][y].sizeX;
-				Ways[x][y].sizeY = Box[x][y].sizeY;
-				Image heroimage; //создаем объект Image (изображение)
-				heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-				Texture herotexture;//создаем объект Texture (текстура)
-				herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-				Sprite herosprite;//создаем объект Sprite(спрайт)
-				herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-				herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+				Ways[x][y - step * 2].name = "BlFrame.png";
+				Ways[x][y - step * 2].sizeX = Box[x][y - step * 2].sizeX;
+				Ways[x][y - step * 2].sizeY = Box[x][y - step * 2].sizeY;
+				Image heroimage; //СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёРµ)
+				heroimage.loadFromFile(Ways[x][y - step * 2].name);//Р·Р°РіСЂСѓР¶Р°РµРј РІ РЅРµРіРѕ С„Р°Р№Р»
+				Texture herotexture;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂР°)
+				herotexture.loadFromImage(heroimage);//РїРµСЂРµРґР°РµРј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Image (РёР·РѕР±СЂР°Р¶РµРЅРёСЏ)
+				Sprite herosprite;//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ Sprite(СЃРїСЂР°Р№С‚)
+				herosprite.setTexture(herotexture);//РїРµСЂРµРґР°С‘Рј РІ РЅРµРіРѕ РѕР±СЉРµРєС‚ Texture (С‚РµРєСЃС‚СѓСЂС‹)
+				herosprite.setPosition(Ways[x][y - step * 2].sizeX, Ways[x][y - step * 2].sizeY);//Р·Р°РґР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕСЏРІР»РµРЅРёСЏ СЃРїСЂР°Р№С‚Р°
 				window.draw(herosprite);
 				if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
 				{
-					ChangePlace(i, j, x, y);
+					Castling(i, j, x, y, step);
 					for (int g = 0; g < height; g++)
 					{
 						for (int h = 0; h < height; h++)
@@ -1505,6 +1420,35 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, float zero)
 				}
 			}
 		}
+	}
+}
+
+void Game::SelWays(int i, int j, int x, int y, float zero)
+{
+	if (x < 8 && x > -1 && y < 8 && y > -1)
+	{
+
+		//if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
+		//{
+			if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+			{
+				if (Box[x][y].BlDethNear)
+				{
+					kingWay++;
+				}
+			}
+			else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+			{
+				if (Box[x][y].WhDethNear)
+				{
+					kingWay++;
+				}
+			}
+			else
+			{
+				kingWay++;	
+			}
+		//}
 
 	}
 }
@@ -1512,13 +1456,17 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, float zero)
 void Game::Castling(int xM, int yM, int xN, int yN, int step)
 {
 
-	Box[xM][yM + step].name = Box[xM][yM].name;
-	Box[xM][yM + step].color = Box[xM][yM].color;
-	Box[xM][yM + step].moves = Box[xM][yM].moves + 1;
-	Box[xN][yN + step].choose = false;
-	Box[xM][yM].name = Box[xN][yN].name;
-	Box[xM][yM].color = Box[xN][yN].color;
-	Box[xM][yM].moves = Box[xN][yN].moves + 1;
+	Box[xN][yN - step].name = Box[xM][yM].name;
+	Box[xN][yN - step].color = Box[xM][yM].color;
+	Box[xN][yN - step].moves = Box[xM][yM].moves + 1;
+	Box[xN][yN - step].choose = false;
+	Box[xN][yN - step * 2].name = Box[xN][yN].name;
+	Box[xN][yN - step * 2].color = Box[xN][yN].color;
+	Box[xN][yN - step * 2].moves = Box[xN][yN].moves + 1;
+	Box[xN][yN - step * 2].choose = false;
+	Box[xM][yM].name = " ";
+	Box[xM][yM].color = 0;
+	Box[xM][yM].moves = 0;
 	Box[xM][yM].choose = false;
 	Box[xN][yN].name = " ";
 	Box[xN][yN].color = 0;
@@ -1595,7 +1543,7 @@ void Game::CanDeath()
 							Box[i + z][j + z].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j + z].color != Box[i][j].color)
+					else// if (Box[i + z][j + z].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1607,10 +1555,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 				int g = 1;
 				for (int z = -1; i + z > -1 && j + g < 8; z--)
@@ -1626,7 +1574,7 @@ void Game::CanDeath()
 							Box[i + z][j + g].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j + g].color != Box[i][j].color)
+					else// if (Box[i + z][j + g].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1638,10 +1586,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 					g++;
 				}
 				int h = -1;
@@ -1658,7 +1606,7 @@ void Game::CanDeath()
 							Box[i + z][j + h].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j + h].color != Box[i][j].color)
+					else// if (Box[i + z][j + h].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1670,10 +1618,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 					h--;
 				}
 				for (int z = 1; i + z < 8 && j + z < 8; z++)
@@ -1689,7 +1637,7 @@ void Game::CanDeath()
 							Box[i + z][j + z].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j + z].color != Box[i][j].color)
+					else// if (Box[i + z][j + z].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1701,10 +1649,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 			}
 			if (Box[i][j].name == "WhHorse.png" || Box[i][j].name == "BlHorse.png")
@@ -1813,7 +1761,7 @@ void Game::CanDeath()
 							Box[i + z][j + z].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j + z].color != Box[i][j].color)
+					else
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1825,10 +1773,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 				int g = 1;
 				for (int z = -1; i + z > -1 && j + g < 8; z--)
@@ -1844,7 +1792,7 @@ void Game::CanDeath()
 							Box[i + z][j + g].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j + g].color != Box[i][j].color)
+					else// if (Box[i + z][j + g].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1856,10 +1804,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 					g++;
 				}
 				int h = -1;
@@ -1876,7 +1824,7 @@ void Game::CanDeath()
 							Box[i + z][j + h].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j + h].color != Box[i][j].color)
+					else// if (Box[i + z][j + h].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1888,10 +1836,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 					h--;
 				}
 				for (int z = 1; i + z < 8 && j + z < 8; z++)
@@ -1907,7 +1855,7 @@ void Game::CanDeath()
 							Box[i + z][j + z].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j + z].color != Box[i][j].color)
+					else// if (Box[i + z][j + z].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1919,10 +1867,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 				for (int z = -1; i + z > -1; z--)
 				{
@@ -1937,7 +1885,7 @@ void Game::CanDeath()
 							Box[i + z][j].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j].color != Box[i][j].color)
+					else// if (Box[i + z][j].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1949,10 +1897,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 				for (int z = 1; i + z < 8; z++)
 				{
@@ -1967,7 +1915,7 @@ void Game::CanDeath()
 							Box[i + z][j].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j].color != Box[i][j].color)
+					else// if (Box[i + z][j].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -1979,10 +1927,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 				for (int z = 1; j + z < 8; z++)
 				{
@@ -1997,7 +1945,7 @@ void Game::CanDeath()
 							Box[i][j + z].BlDethNear = true;
 						}
 					}
-					else if (Box[i][j + z].color != Box[i][j].color)
+					else// if (Box[i][j + z].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -2009,10 +1957,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 				for (int z = -1; j + z > -1; z--)
 				{
@@ -2027,7 +1975,7 @@ void Game::CanDeath()
 							Box[i][j + z].BlDethNear = true;
 						}
 					}
-					else if (Box[i][j + z].color != Box[i][j].color)
+					else// if (Box[i][j + z].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -2039,10 +1987,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 			}
 			if (Box[i][j].name == "WhKing.png" || Box[i][j].name == "BlKing.png")
@@ -2150,7 +2098,7 @@ void Game::CanDeath()
 							Box[i + z][j].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j].color != Box[i][j].color)
+					else// if (Box[i + z][j].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -2162,10 +2110,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 				for (int z = 1; i + z < 8; z++)
 				{
@@ -2180,7 +2128,7 @@ void Game::CanDeath()
 							Box[i + z][j].BlDethNear = true;
 						}
 					}
-					else if (Box[i + z][j].color != Box[i][j].color)
+					else// if (Box[i + z][j].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -2192,10 +2140,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 				for (int z = 1; j + z < 8; z++)
 				{
@@ -2210,7 +2158,7 @@ void Game::CanDeath()
 							Box[i][j + z].BlDethNear = true;
 						}
 					}
-					else if (Box[i][j + z].color != Box[i][j].color)
+					else// if (Box[i][j + z].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -2222,10 +2170,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 				for (int z = -1; j + z > -1; z--)
 				{
@@ -2240,7 +2188,7 @@ void Game::CanDeath()
 							Box[i][j + z].BlDethNear = true;
 						}
 					}
-					else if (Box[i][j + z].color != Box[i][j].color)
+					else// if (Box[i][j + z].color != Box[i][j].color)
 					{
 						if (Box[i][j].color == 1)
 						{
@@ -2252,10 +2200,10 @@ void Game::CanDeath()
 						}
 						break;
 					}
-					else
+					/*else
 					{
 						break;
-					}
+					}*/
 				}
 			}
 		}
@@ -2280,26 +2228,26 @@ void Game::ChangeFigure(int xM, int yM, int color, Vector2i mousePos)
 	shape.setPosition(1470, 60);
 	shape.setFillColor(Color::White);
 	window.draw(shape);*/
-	Font font;//шрифт 
-	font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-	Text text("", font, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+	Font font;//С€СЂРёС„С‚ 
+	font.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+	Text text("", font, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 	text.setFillColor(sf::Color::Black);
-	text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-	text.setString("Choose\nFigure:");//задает строку тексту
-	text.setPosition(1500, 60);//задаем позицию текста, центр камеры
-	window.draw(text);//рисую этот текст
+	text.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+	text.setString("Choose\nFigure:");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+	text.setPosition(1500, 60);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+	window.draw(text);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
 	sf::RectangleShape queenShape(sf::Vector2f(400, 150));
 	queenShape.setPosition(1470, 320);
 	queenShape.setFillColor(Color::White);
 	window.draw(queenShape);
-	Font queenFont;//шрифт 
-	queenFont.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-	Text queenText("", queenFont, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+	Font queenFont;//С€СЂРёС„С‚ 
+	queenFont.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+	Text queenText("", queenFont, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 	queenText.setFillColor(sf::Color::Black);
-	queenText.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-	queenText.setString("Queen");//задает строку тексту
-	queenText.setPosition(1500, 320);//задаем позицию текста, центр камеры
-	window.draw(queenText);//рисую этот текст
+	queenText.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+	queenText.setString("Queen");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+	queenText.setPosition(1500, 320);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+	window.draw(queenText);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
 	if (Mouse::isButtonPressed(Mouse::Left) && queenShape.getGlobalBounds().contains(mousePos.x, mousePos.y))
 	{
 		for (int i = 0; i < height; i++)
@@ -2329,14 +2277,14 @@ void Game::ChangeFigure(int xM, int yM, int color, Vector2i mousePos)
 	bishopShape.setPosition(1470, 470);
 	bishopShape.setFillColor(Color::White);
 	window.draw(bishopShape);
-	Font bishopFont;//шрифт 
-	bishopFont.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-	Text bishopText("", bishopFont, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+	Font bishopFont;//С€СЂРёС„С‚ 
+	bishopFont.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+	Text bishopText("", bishopFont, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 	bishopText.setFillColor(sf::Color::Black);
-	bishopText.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-	bishopText.setString("Bishop");//задает строку тексту
-	bishopText.setPosition(1500, 470);//задаем позицию текста, центр камеры
-	window.draw(bishopText);//рисую этот текст
+	bishopText.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+	bishopText.setString("Bishop");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+	bishopText.setPosition(1500, 470);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+	window.draw(bishopText);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
 	if (Mouse::isButtonPressed(Mouse::Left) && bishopShape.getGlobalBounds().contains(mousePos.x, mousePos.y))
 	{
 		for (int i = 0; i < height; i++)
@@ -2365,14 +2313,14 @@ void Game::ChangeFigure(int xM, int yM, int color, Vector2i mousePos)
 	knightShape.setPosition(1470, 620);
 	knightShape.setFillColor(Color::White);
 	window.draw(knightShape);
-	Font knightFont;//шрифт 
-	knightFont.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-	Text knightText("", knightFont, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+	Font knightFont;//С€СЂРёС„С‚ 
+	knightFont.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+	Text knightText("", knightFont, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 	knightText.setFillColor(sf::Color::Black);
-	knightText.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-	knightText.setString("Knight");//задает строку тексту
-	knightText.setPosition(1500, 620);//задаем позицию текста, центр камеры
-	window.draw(knightText);//рисую этот текст
+	knightText.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+	knightText.setString("Knight");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+	knightText.setPosition(1500, 620);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+	window.draw(knightText);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
 	if (Mouse::isButtonPressed(Mouse::Left) && knightShape.getGlobalBounds().contains(mousePos.x, mousePos.y))
 	{
 		for (int i = 0; i < height; i++)
@@ -2401,14 +2349,14 @@ void Game::ChangeFigure(int xM, int yM, int color, Vector2i mousePos)
 	rookShape.setPosition(1470, 780);
 	rookShape.setFillColor(Color::White);
 	window.draw(rookShape);
-	Font rookFont;//шрифт 
-	rookFont.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-	Text rookText("", rookFont, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
+	Font rookFont;//С€СЂРёС„С‚ 
+	rookFont.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+	Text rookText("", rookFont, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
 	rookText.setFillColor(sf::Color::Black);
-	rookText.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-	rookText.setString("Rook");//задает строку тексту
-	rookText.setPosition(1500, 780);//задаем позицию текста, центр камеры
-	window.draw(rookText);//рисую этот текст
+	rookText.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+	rookText.setString("Rook");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+	rookText.setPosition(1500, 780);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+	window.draw(rookText);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
 	if (Mouse::isButtonPressed(Mouse::Left) && rookShape.getGlobalBounds().contains(mousePos.x, mousePos.y))
 	{
 		for (int i = 0; i < height; i++)
@@ -2446,6 +2394,7 @@ void Game::Shah()
 				if (Box[i][j].BlDethNear)
 				{
 					WhKingInDang = true;
+					check = true;
 				}
 			}
 			else if (Box[i][j].name == "BlKing.png")
@@ -2453,13 +2402,85 @@ void Game::Shah()
 				if (Box[i][j].WhDethNear)
 				{
 					BlKingInDang = true;
+					check = true;
 				}
 			}
 		}
 	}
+}
+void Game::WrCheck()
+{
+	sf::RectangleShape Checkshape(sf::Vector2f(400, 150));
+	Checkshape.setPosition(1470, 210);
+	Checkshape.setFillColor(Color::White);
+	window.draw(Checkshape);
+	Font Checkfont;//С€СЂРёС„С‚ 
+	Checkfont.loadFromFile("Sunday-Regular.ttf");//РїРµСЂРµРґР°РµРј РЅР°С€РµРјСѓ С€СЂРёС„С‚Сѓ С„Р°Р№Р» С€СЂРёС„С‚Р°
+	Text Checktext("", Checkfont, 100);//СЃРѕР·РґР°РµРј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚. Р·Р°РєРёРґС‹РІР°РµРј РІ РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ СЃС‚СЂРѕРєСѓ, С€СЂРёС„С‚, СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р°(РІ РїРёРєСЃРµР»СЏС…);//СЃР°Рј РѕР±СЉРµРєС‚ С‚РµРєСЃС‚ (РЅРµ СЃС‚СЂРѕРєР°)
+	Checktext.setFillColor(sf::Color::Black);
+	Checktext.setStyle(sf::Text::Bold);//Р¶РёСЂРЅС‹Р№ Рё РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№ С‚РµРєСЃС‚. РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РѕРЅ "С…СѓРґРѕР№":)) Рё РЅРµ РїРѕРґС‡РµСЂРєРЅСѓС‚С‹Р№
+	Checktext.setString("Check\nof the\nKing");//Р·Р°РґР°РµС‚ СЃС‚СЂРѕРєСѓ С‚РµРєСЃС‚Сѓ
+	Checktext.setPosition(1500, 210);//Р·Р°РґР°РµРј РїРѕР·РёС†РёСЋ С‚РµРєСЃС‚Р°, С†РµРЅС‚СЂ РєР°РјРµСЂС‹
+	window.draw(Checktext);//СЂРёСЃСѓСЋ СЌС‚РѕС‚ С‚РµРєСЃС‚
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < length; j++)
+		{
+			if (Box[i][j].name == "WhKing.png" || Box[i][j].name == "BlKing.png")
+			{
+				kingWay = 0;
+				if (Box[i][j - 1].color != Box[i][j].color)
+				{
+					SelWays(i, j, i, j - 1, 1.0f);
+				}
+				if (Box[i][j + 1].color != Box[i][j].color)
+				{
+					SelWays(i, j, i, j + 1, 1.0f);
+				}
+				if (Box[i + 1][j + 1].color != Box[i][j].color)
+				{
+					SelWays(i, j, i + 1, j + 1, 1.0f);
+				}
+				if (Box[i + 1][j - 1].color != Box[i][j].color)
+				{
+					SelWays(i, j, i + 1, j - 1, 1.0f);
+				}
+				if (Box[i - 1][j - 1].color != Box[i][j].color)
+				{
+					SelWays(i, j, i - 1, j - 1, 1.0f);
+				}
+				if (Box[i - 1][j + 1].color != Box[i][j].color)
+				{
+					SelWays(i, j, i - 1, j + 1, 1.0f);
+				}
+				if (Box[i + 1][j].color != Box[i][j].color)
+				{
+					SelWays(i, j, i + 1, j, 1.0f);
+				}
+				if (Box[i - 1][j].color != Box[i][j].color)
+				{
+					SelWays(i, j, i - 1, j, 1.0f);
+				}
+				if (kingWay == 0)
+				{
+					if (Box[i][j].color == 1 && WhKingInDang)
+					{
+						BlCheckmate = true;
+
+					}
+					if (Box[i][j].color == -1 && BlKingInDang)
+					{
+						WhCheckmate = true;
+					}
+				}
+			}
+		}
+	}
+	
 }
 void Game::Start()
 {
 	CrPoints();
 	CrChessDesk();
 }
+
