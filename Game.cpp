@@ -14,7 +14,7 @@ int bestPuwn = -1;
 int schet = 1;
 bool check = false;
 
- void Game::CrChessDesk()
+void Game::CrChessDesk()
 {
 	//Render window(sf::VideoMode(1920, 1080), "SFML Window"); //увеличили для удобства размер окна
 	RenderWindow& win2 = window;
@@ -84,7 +84,7 @@ bool check = false;
 			window.clear(Color::White);
 			if (BlCheckmate)
 			{
-				
+
 				Font font;//шрифт 
 				font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
 				Text text("", font, 200);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
@@ -123,7 +123,7 @@ bool check = false;
 			}
 			else if (WhCheckmate)
 			{
-				
+
 				Font font;//шрифт 
 				font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
 				Text text("", font, 200);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
@@ -156,7 +156,7 @@ bool check = false;
 				window.draw(text);//рисую этот текст
 				window.display();
 				if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
-				{			
+				{
 					window.close();
 				}
 			}
@@ -281,13 +281,13 @@ void Game::CrPoints()
 	//---------------------------
 
 	Box[3][0].sizeX = 545;
-	Box[3][0].sizeY = 378;	
+	Box[3][0].sizeY = 378;
 	Box[3][1].sizeX = 645;
-	Box[3][1].sizeY = 378;	
+	Box[3][1].sizeY = 378;
 	Box[3][2].sizeX = 745;
-	Box[3][2].sizeY = 378;	
+	Box[3][2].sizeY = 378;
 	Box[3][3].sizeX = 845;
-	Box[3][3].sizeY = 378;	
+	Box[3][3].sizeY = 378;
 	Box[3][4].sizeX = 945;
 	Box[3][4].sizeY = 378;
 	Box[3][5].sizeX = 1045;
@@ -379,12 +379,12 @@ void Game::CrPoints()
 	Box[7][0].color = 1;
 	Box[7][0].sizeX = 545;
 	Box[7][0].sizeY = 798;
-		
+
 	Box[7][1].name = "WhHorse.png";
 	Box[7][1].color = 1;
 	Box[7][1].sizeX = 645;
 	Box[7][1].sizeY = 798;
-		
+
 	Box[7][2].name = "WhBishop.png";
 	Box[7][2].color = 1;
 	Box[7][2].sizeX = 745;
@@ -394,22 +394,22 @@ void Game::CrPoints()
 	Box[7][3].color = 1;
 	Box[7][3].sizeX = 845;
 	Box[7][3].sizeY = 798;
-		
+
 	Box[7][4].name = "WhKing.png";
 	Box[7][4].color = 1;
 	Box[7][4].sizeX = 945;
 	Box[7][4].sizeY = 798;
-		
+
 	Box[7][5].name = "WhBishop.png";
 	Box[7][5].color = 1;
 	Box[7][5].sizeX = 1045;
 	Box[7][5].sizeY = 798;
-		
+
 	Box[7][6].name = "WhHorse.png";
 	Box[7][6].color = 1;
 	Box[7][6].sizeX = 1145;
 	Box[7][6].sizeY = 798;
-		
+
 	Box[7][7].name = "WhTower.png";
 	Box[7][7].color = 1;
 	Box[7][7].sizeX = 1245;
@@ -488,7 +488,7 @@ void Game::WrMove()
 	{
 		text.setString("Move:\nBlack");//задает строку тексту
 	}
-	
+
 	text.setPosition(100, 50);//задаем позицию текста, центр камеры
 	window.draw(text);//рисую этот текст
 }
@@ -587,7 +587,7 @@ void Game::IfChoose(Vector2i mousePos)
 						CrWays(mousePos);
 					}
 				}
-				else 
+				else
 				{
 					sf::RectangleShape shape(sf::Vector2f(400, 150));
 					shape.setPosition(1470, 60);
@@ -626,7 +626,7 @@ void Game::CrWays(Vector2i mousePos)
 		for (int j = 0; j < length; j++)
 		{
 			if (Box[i][j].sumKord == figure)
-			{	
+			{
 				if (Box[i][j].name == "WhPuwn.png") // Box[i][j].name == "BlPuwn.png" || 
 				{
 					if (Box[i][j].moves == 0)
@@ -1256,7 +1256,7 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
 				}
 			}
 		}
-	
+
 	}
 }
 void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, double zero)
@@ -1430,24 +1430,24 @@ void Game::SelWays(int i, int j, int x, int y, float zero)
 
 		//if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
 		//{
-			if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+		if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+		{
+			if (Box[x][y].BlDethNear && !Box[x][y].WhDethNear)
 			{
-				if (Box[x][y].BlDethNear)
-				{
-					kingWay++;
-				}
+				kingWay++;
 			}
-			else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+		}
+		else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+		{
+			if (Box[x][y].WhDethNear && !Box[x][y].BlDethNear)
 			{
-				if (Box[x][y].WhDethNear)
-				{
-					kingWay++;
-				}
+				kingWay++;
 			}
-			else
-			{
-				kingWay++;	
-			}
+		}
+		else
+		{
+			kingWay++;
+		}
 		//}
 
 	}
@@ -1511,7 +1511,7 @@ void Game::CanDeath()
 				}
 				else
 				{
-					Box[i - 1][j - 1].WhDethNear = true;			
+					Box[i - 1][j - 1].WhDethNear = true;
 					Box[i - 1][j + 1].WhDethNear = true;
 				}
 			}
@@ -1519,12 +1519,12 @@ void Game::CanDeath()
 			{
 				if (Box[i][j].moves == 0)
 				{
-					Box[i + 1][j - 1].BlDethNear = true;									
-					Box[i + 1][j + 1].BlDethNear = true;					
+					Box[i + 1][j - 1].BlDethNear = true;
+					Box[i + 1][j + 1].BlDethNear = true;
 				}
 				else
-				{					
-					Box[i + 1][j - 1].BlDethNear = true;					
+				{
+					Box[i + 1][j - 1].BlDethNear = true;
 					Box[i + 1][j + 1].BlDethNear = true;
 				}
 			}
@@ -2081,7 +2081,8 @@ void Game::CanDeath()
 					else if (Box[i][j].color == -1)
 					{
 						Box[i - 1][j].BlDethNear = true;
-					}					}
+					}
+				}
 			}
 			if (Box[i][j].name == "WhTower.png" || Box[i][j].name == "BlTower.png")
 			{
@@ -2271,7 +2272,7 @@ void Game::ChangeFigure(int xM, int yM, int color, Vector2i mousePos)
 				}
 			}
 		}
-		
+
 	}
 	sf::RectangleShape bishopShape(sf::Vector2f(400, 150));
 	bishopShape.setPosition(1470, 470);
@@ -2476,7 +2477,7 @@ void Game::WrCheck()
 			}
 		}
 	}
-	
+
 }
 void Game::Start()
 {
