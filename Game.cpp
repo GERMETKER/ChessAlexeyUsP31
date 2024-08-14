@@ -1437,7 +1437,11 @@ void Game::SelWays(int i, int j, int x, int y, float zero)
 				kingWay++;
 			}
 		}
-		else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+		else
+		{
+			kingWay++;
+		}
+		if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
 		{
 			if (Box[x][y].WhDethNear && !Box[x][y].BlDethNear)
 			{
@@ -1995,7 +1999,7 @@ void Game::CanDeath()
 			}
 			if (Box[i][j].name == "WhKing.png" || Box[i][j].name == "BlKing.png")
 			{
-				if (Box[i][j - 1].color != Box[i][j].color)
+				/*if (Box[i][j - 1].color != Box[i][j].color)
 				{
 					if (Box[i][j].color == 1)
 					{
@@ -2082,7 +2086,7 @@ void Game::CanDeath()
 					{
 						Box[i - 1][j].BlDethNear = true;
 					}
-				}
+				}*/
 			}
 			if (Box[i][j].name == "WhTower.png" || Box[i][j].name == "BlTower.png")
 			{
@@ -2484,4 +2488,3 @@ void Game::Start()
 	CrPoints();
 	CrChessDesk();
 }
-
