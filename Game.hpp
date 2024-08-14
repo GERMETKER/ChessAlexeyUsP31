@@ -29,11 +29,12 @@ public:
 	void SelWays(Vector2i mousePos, int i, int j, int x, int y, std::string zero);
 	void SelWays(Vector2i mousePos, int i, int j, int x, int y, double zero);
 	void SelWays(Vector2i mousePos, int i, int j, int x, int y, int step);
-	void SelWays(Vector2i mousePos, int i, int j, int x, int y, float zero);
+	void SelWays(int i, int j, int x, int y, float zero);
 	void Castling(int xM, int yM, int xN, int yN, int step);
 	void CanDeath();
 	void ChangeFigure(int xM, int yM, int color, Vector2i mousePos);
 	void Shah();
+	void WrCheck();
 	bool WhCheckmate = false;
 	bool BlCheckmate = false;
 private:
