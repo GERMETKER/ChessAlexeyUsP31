@@ -1,5 +1,6 @@
 #ifndef _POINT_HPP_
 #define _POINT_HPP_
+#include <vector>
 #include "Game.hpp"
 #include "Constants.hpp"
 #include <SFML/Graphics.hpp>
@@ -19,6 +20,7 @@ public:
 	bool WhDethNear = false;
 	bool BlDethNear = false;
 	bool TakeOnMove = false;
+	int attacker = -1;
 };
 
 #endif
