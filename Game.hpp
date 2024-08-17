@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <Windows.h>
 #include "MoveWay.hpp"
+#include <vector>
 using namespace sf;
 class Game
 {
@@ -37,6 +38,8 @@ public:
 	void WrCheck();
 	bool WhCheckmate = false;
 	bool BlCheckmate = false;
+	void WrPath();
+	void CrRedFrame(int i, int j);
 private:
 
 };
