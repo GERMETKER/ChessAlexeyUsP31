@@ -2,6 +2,7 @@
 #define _CONSTANTS_HPP_
 #include "Point.hpp"
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include <iostream>
 const int length = 8;
 const int height = 8;
