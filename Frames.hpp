@@ -14,7 +14,7 @@ public:
 	bool choose = false;
 	bool canMove = false;
 	int sumKord;
-	//ÇÄÅÑÜ ÁÛË ÈÃÎĞÜ
+	//Ğ—Ğ”Ğ•Ğ¡Ğ¬ Ğ‘Ğ«Ğ› Ğ˜Ğ“ĞĞ Ğ¬
 };
 
 #endif
