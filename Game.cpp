@@ -66,7 +66,7 @@ void Game::CrChessDesk()
 			if (check)
 			{
 				WrPath();
-				WrCheck();
+				WrCheck(mousePos);
 			}
 			IfChoose(mousePos);
 			window.display();
@@ -1164,7 +1164,6 @@ void Game::CrWays(Vector2i mousePos)
 					}
 				}
 			}
-			
 		}
 	}
 }
@@ -1212,6 +1211,7 @@ void Game::ChangePlace(int xM, int yM, int xN, int yN)
 		figure = -1;
 	}
 	CanDeath();
+	Shah();
 }
 
 void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
@@ -1295,25 +1295,25 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
 		{
 			if ((Box[i][j].name == "WhKing.png" && WhKingInDang) || (Box[i][j].name == "BlKing.png" && BlKingInDang))
 			{
-				if (Box[i][j].sumKord == figure)
+				if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
 				{
-					if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
+					if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
 					{
-						if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
-						{
-							/*MakeMove = Time;
-							figure = -1;*/
-						}
-						else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
-						{
-							/*MakeMove = Time;
-							figure = -1;*/
-						}
-						else
+						/*MakeMove = Time;
+						figure = -1;*/
+					}
+					else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+					{
+						/*MakeMove = Time;
+						figure = -1;*/
+					}
+					else
+					{
+						kingWay++;
+						if (Box[i][j].sumKord == figure)
 						{
 							if (x == 0 && y == 5)
 							{
-								kingWay++;
 								Ways[0][5].name = "BlFrame.png";
 								Ways[0][5].name = "BlFrame.png";
 								Ways[0][5].sizeX = Box[0][5].sizeX;
@@ -1340,7 +1340,6 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
 							}
 							else
 							{
-								kingWay++;
 								Ways[x][y].name = "BlFrame.png";
 								Ways[x][y].sizeX = Box[x][y].sizeX;
 								Ways[x][y].sizeY = Box[x][y].sizeY;
@@ -1368,7 +1367,7 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
 					}
 				}
 			}
-			else if (Path[x][y].name == "RedFrame.png")
+			else if (Path[x][y].name == "RedFrame.png" && Box[i][j].color == Time)
 			{
 				kingWay++;
 				if (Box[i][j].sumKord == figure)
@@ -1512,7 +1511,7 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, double zero)
 		}
 		else
 		{
-			if (Path[x][y].name == "RedFrame.png")
+			if (Path[x][y].name == "RedFrame.png" && Box[i][j].color == Time)
 			{
 				kingWay++;
 				if (Box[i][j].sumKord == figure)
@@ -1629,7 +1628,7 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, std::string ze
 		}
 		else
 		{
-			if (Path[x][y].name == "RedFrame.png")
+			if (Path[x][y].name == "RedFrame.png" && Box[i][j].color == Time)
 			{
 
 				kingWay++;
@@ -3613,6 +3612,9 @@ void Game::ChangeFigure(int xM, int yM, int color, Vector2i mousePos)
 
 void Game::Shah()
 {
+	check = false;
+	WhKingInDang = false;
+	BlKingInDang = false;
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < height; j++)
@@ -3636,7 +3638,7 @@ void Game::Shah()
 		}
 	}
 }
-void Game::WrCheck()
+void Game::WrCheck(Vector2i mousePos)
 {
 	sf::RectangleShape Checkshape(sf::Vector2f(400, 150));
 	Checkshape.setPosition(1470, 210);
@@ -3657,6 +3659,7 @@ void Game::WrCheck()
 			if (Box[i][j].name == "WhKing.png" || Box[i][j].name == "BlKing.png")
 			{
 				kingWay = 0;
+				CrWays(mousePos);
 				if (kingWay == 0)
 				{
 					if (Box[i][j].color == 1 && WhKingInDang)
@@ -4027,19 +4030,35 @@ void Game::WrPath()
 }
 void Game::CrRedFrame(int i, int j)
 {
-	Path[i][j].name = "RedFrame.png";
-	Path[i][j].name = "RedFrame.png";
-	Path[i][j].sizeX = Box[i][j].sizeX;
-	Path[i][j].sizeY = Box[i][j].sizeY;
-	Image heroimage; //создаем объект Image (изображение)
-	heroimage.loadFromFile(Path[i][j].name);//загружаем в него файл
-	Texture herotexture;//создаем объект Texture (текстура)
-	herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-	Sprite herosprite;//создаем объект Sprite(спрайт)
-	herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-	herosprite.setPosition(Path[i][j].sizeX, Path[i][j].sizeY);//задаем начальные координаты появления спрайта
-	window.draw(herosprite);//выводим спрайт на экран
-
+	if (i == 0 && j == 5)
+	{
+		Path[0][5].name = "RedFrame.png";
+		Path[0][5].name = "RedFrame.png";
+		Path[0][5].sizeX = Box[0][5].sizeX;
+		Path[0][5].sizeY = Box[0][5].sizeY;
+		Image heroimage; //создаем объект Image (изображение)
+		heroimage.loadFromFile(Path[0][5].name);//загружаем в него файл
+		Texture herotexture;//создаем объект Texture (текстура)
+		herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+		Sprite herosprite;//создаем объект Sprite(спрайт)
+		herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+		herosprite.setPosition(Path[0][5].sizeX, Path[0][5].sizeY);//задаем начальные координаты появления спрайта
+		window.draw(herosprite);//выводим спрайт на экран
+	}
+	else
+	{
+		Path[i][j].name = "RedFrame.png";
+		Path[i][j].sizeX = Box[i][j].sizeX;
+		Path[i][j].sizeY = Box[i][j].sizeY;
+		Image heroimage; //создаем объект Image (изображение)
+		heroimage.loadFromFile(Path[i][j].name);//загружаем в него файл
+		Texture herotexture;//создаем объект Texture (текстура)
+		herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+		Sprite herosprite;//создаем объект Sprite(спрайт)
+		herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+		herosprite.setPosition(Path[i][j].sizeX, Path[i][j].sizeY);//задаем начальные координаты появления спрайта
+		window.draw(herosprite);//выводим спрайт на экран
+	}
 }
 void Game::Start()
 {
