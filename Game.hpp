@@ -35,7 +35,7 @@ public:
 	void CanDeath();
 	void ChangeFigure(int xM, int yM, int color, Vector2i mousePos);
 	void Shah();
-	void WrCheck();
+	void WrCheck(Vector2i mousePos);
 	bool WhCheckmate = false;
 	bool BlCheckmate = false;
 	void WrPath();
