@@ -15,6 +15,7 @@ int figure = -1;
 int bestPuwn = -1;
 int schet = 1;
 bool check = false;
+bool checking = false;
 
 void Game::CrChessDesk()
 {
@@ -352,18 +353,18 @@ void Game::CrPoints()
 	Box[6][2].sizeX = 745;
 	Box[6][2].sizeY = 693;
 
-	Box[6][3].name = "WhPuwn.png";
-	Box[6][3].color = 1;
+	/*Box[6][3].name = "WhPuwn.png";
+	Box[6][3].color = 1;*/
 	Box[6][3].sizeX = 845;
 	Box[6][3].sizeY = 693;
 
-	Box[6][4].name = "WhPuwn.png";
-	Box[6][4].color = 1;
+	/*Box[6][4].name = "WhPuwn.png";
+	Box[6][4].color = 1;*/
 	Box[6][4].sizeX = 945;
 	Box[6][4].sizeY = 693;
 
-	Box[6][5].name = "WhPuwn.png";
-	Box[6][5].color = 1;
+	/*Box[6][5].name = "WhPuwn.png";
+	Box[6][5].color = 1;*/
 	Box[6][5].sizeX = 1045;
 	Box[6][5].sizeY = 693;
 
@@ -398,7 +399,8 @@ void Game::CrPoints()
 	Box[7][3].sizeX = 845;
 	Box[7][3].sizeY = 798;
 
-	Box[7][4].name = "WhKing.png";
+	//[7][4].name = "WhKing.png";
+	Box[7][4].name = "WhQueen.png";
 	Box[7][4].color = 1;
 	Box[7][4].sizeX = 945;
 	Box[7][4].sizeY = 798;
@@ -1218,162 +1220,16 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
 {
 	if (x < 8 && x > -1 && y < 8 && y > -1)
 	{
-		if (!check)
-		{
-			if (Box[i][j].sumKord == figure)
+		//if (IsDang(i, j, x, y))
+		//{
+			if (!check)
 			{
-				if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
-				{
-					if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
-					{
-						/*MakeMove = Time;
-						figure = -1;*/
-					}
-					else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
-					{
-						/*MakeMove = Time;
-						figure = -1;*/
-					}
-					else
-					{
-						if (x == 0 && y == 5)
-						{
-							Ways[0][5].name = "BlFrame.png";
-							Ways[0][5].name = "BlFrame.png";
-							Ways[0][5].sizeX = Box[0][5].sizeX;
-							Ways[0][5].sizeY = Box[0][5].sizeY;
-							Image heroimage; //создаем объект Image (изображение)
-							heroimage.loadFromFile(Ways[0][5].name);//загружаем в него файл
-							Texture herotexture;//создаем объект Texture (текстура)
-							herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-							Sprite herosprite;//создаем объект Sprite(спрайт)
-							herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-							herosprite.setPosition(Ways[0][5].sizeX, Ways[0][5].sizeY);//задаем начальные координаты появления спрайта
-							window.draw(herosprite);
-							if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
-							{
-								ChangePlace(i, j, x, y);
-								for (int g = 0; g < height; g++)
-								{
-									for (int h = 0; h < height; h++)
-									{
-										Box[g][h].TakeOnMove = false;
-									}
-								}
-							}
-						}
-						else
-						{
-							Ways[x][y].name = "BlFrame.png";
-							Ways[x][y].sizeX = Box[x][y].sizeX;
-							Ways[x][y].sizeY = Box[x][y].sizeY;
-							Image heroimage; //создаем объект Image (изображение)
-							heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-							Texture herotexture;//создаем объект Texture (текстура)
-							herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-							Sprite herosprite;//создаем объект Sprite(спрайт)
-							herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-							herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
-							window.draw(herosprite);
-							if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
-							{
-								ChangePlace(i, j, x, y);
-								for (int g = 0; g < height; g++)
-								{
-									for (int h = 0; h < height; h++)
-									{
-										Box[g][h].TakeOnMove = false;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			if ((Box[i][j].name == "WhKing.png" && WhKingInDang) || (Box[i][j].name == "BlKing.png" && BlKingInDang))
-			{
-				if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
-				{
-					if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
-					{
-						/*MakeMove = Time;
-						figure = -1;*/
-					}
-					else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
-					{
-						/*MakeMove = Time;
-						figure = -1;*/
-					}
-					else
-					{
-						kingWay++;
-						if (Box[i][j].sumKord == figure)
-						{
-							if (x == 0 && y == 5)
-							{
-								Ways[0][5].name = "BlFrame.png";
-								Ways[0][5].name = "BlFrame.png";
-								Ways[0][5].sizeX = Box[0][5].sizeX;
-								Ways[0][5].sizeY = Box[0][5].sizeY;
-								Image heroimage; //создаем объект Image (изображение)
-								heroimage.loadFromFile(Ways[0][5].name);//загружаем в него файл
-								Texture herotexture;//создаем объект Texture (текстура)
-								herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-								Sprite herosprite;//создаем объект Sprite(спрайт)
-								herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-								herosprite.setPosition(Ways[0][5].sizeX, Ways[0][5].sizeY);//задаем начальные координаты появления спрайта
-								window.draw(herosprite);
-								if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
-								{
-									ChangePlace(i, j, x, y);
-									for (int g = 0; g < height; g++)
-									{
-										for (int h = 0; h < height; h++)
-										{
-											Box[g][h].TakeOnMove = false;
-										}
-									}
-								}
-							}
-							else
-							{
-								Ways[x][y].name = "BlFrame.png";
-								Ways[x][y].sizeX = Box[x][y].sizeX;
-								Ways[x][y].sizeY = Box[x][y].sizeY;
-								Image heroimage; //создаем объект Image (изображение)
-								heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-								Texture herotexture;//создаем объект Texture (текстура)
-								herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-								Sprite herosprite;//создаем объект Sprite(спрайт)
-								herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-								herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
-								window.draw(herosprite);
-								if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
-								{
-									ChangePlace(i, j, x, y);
-									for (int g = 0; g < height; g++)
-									{
-										for (int h = 0; h < height; h++)
-										{
-											Box[g][h].TakeOnMove = false;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			else if (Path[x][y].name == "RedFrame.png" && Box[i][j].color == Time)
-			{
-				kingWay++;
 				if (Box[i][j].sumKord == figure)
 				{
 					if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
 					{
+						/*if (IsDang(i, j, x, y))
+						{*/
 						if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
 						{
 							/*MakeMove = Time;
@@ -1438,10 +1294,162 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
 								}
 							}
 						}
+						//}
 					}
 				}
 			}
-		}
+			else
+			{
+				if ((Box[i][j].name == "WhKing.png" && WhKingInDang) || (Box[i][j].name == "BlKing.png" && BlKingInDang))
+				{
+					if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
+					{
+						if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+						{
+							/*MakeMove = Time;
+							figure = -1;*/
+						}
+						else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+						{
+							/*MakeMove = Time;
+							figure = -1;*/
+						}
+						else
+						{
+							kingWay++;
+							if (Box[i][j].sumKord == figure)
+							{
+								if (x == 0 && y == 5)
+								{
+									Ways[0][5].name = "BlFrame.png";
+									Ways[0][5].name = "BlFrame.png";
+									Ways[0][5].sizeX = Box[0][5].sizeX;
+									Ways[0][5].sizeY = Box[0][5].sizeY;
+									Image heroimage; //создаем объект Image (изображение)
+									heroimage.loadFromFile(Ways[0][5].name);//загружаем в него файл
+									Texture herotexture;//создаем объект Texture (текстура)
+									herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+									Sprite herosprite;//создаем объект Sprite(спрайт)
+									herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+									herosprite.setPosition(Ways[0][5].sizeX, Ways[0][5].sizeY);//задаем начальные координаты появления спрайта
+									window.draw(herosprite);
+									if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+									{
+										ChangePlace(i, j, x, y);
+										for (int g = 0; g < height; g++)
+										{
+											for (int h = 0; h < height; h++)
+											{
+												Box[g][h].TakeOnMove = false;
+											}
+										}
+									}
+								}
+								else
+								{
+									Ways[x][y].name = "BlFrame.png";
+									Ways[x][y].sizeX = Box[x][y].sizeX;
+									Ways[x][y].sizeY = Box[x][y].sizeY;
+									Image heroimage; //создаем объект Image (изображение)
+									heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
+									Texture herotexture;//создаем объект Texture (текстура)
+									herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+									Sprite herosprite;//создаем объект Sprite(спрайт)
+									herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+									herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+									window.draw(herosprite);
+									if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+									{
+										ChangePlace(i, j, x, y);
+										for (int g = 0; g < height; g++)
+										{
+											for (int h = 0; h < height; h++)
+											{
+												Box[g][h].TakeOnMove = false;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				else if (Path[x][y].name == "RedFrame.png" && Box[i][j].color == Time)
+				{
+					kingWay++;
+					if (Box[i][j].sumKord == figure)
+					{
+						if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
+						{
+							if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+							{
+								/*MakeMove = Time;
+								figure = -1;*/
+							}
+							else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+							{
+								/*MakeMove = Time;
+								figure = -1;*/
+							}
+							else
+							{
+								if (x == 0 && y == 5)
+								{
+									Ways[0][5].name = "BlFrame.png";
+									Ways[0][5].name = "BlFrame.png";
+									Ways[0][5].sizeX = Box[0][5].sizeX;
+									Ways[0][5].sizeY = Box[0][5].sizeY;
+									Image heroimage; //создаем объект Image (изображение)
+									heroimage.loadFromFile(Ways[0][5].name);//загружаем в него файл
+									Texture herotexture;//создаем объект Texture (текстура)
+									herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+									Sprite herosprite;//создаем объект Sprite(спрайт)
+									herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+									herosprite.setPosition(Ways[0][5].sizeX, Ways[0][5].sizeY);//задаем начальные координаты появления спрайта
+									window.draw(herosprite);
+									if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+									{
+										ChangePlace(i, j, x, y);
+										for (int g = 0; g < height; g++)
+										{
+											for (int h = 0; h < height; h++)
+											{
+												Box[g][h].TakeOnMove = false;
+											}
+										}
+									}
+								}
+								else
+								{
+									Ways[x][y].name = "BlFrame.png";
+									Ways[x][y].sizeX = Box[x][y].sizeX;
+									Ways[x][y].sizeY = Box[x][y].sizeY;
+									Image heroimage; //создаем объект Image (изображение)
+									heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
+									Texture herotexture;//создаем объект Texture (текстура)
+									herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+									Sprite herosprite;//создаем объект Sprite(спрайт)
+									herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+									herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+									window.draw(herosprite);
+									if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+									{
+										ChangePlace(i, j, x, y);
+										for (int g = 0; g < height; g++)
+										{
+											for (int h = 0; h < height; h++)
+											{
+												Box[g][h].TakeOnMove = false;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		//}
 	}
 }
 void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, double zero)
@@ -1683,7 +1691,7 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, int step)
 {
 	if (x < 8 && x > -1 && y < 8 && y > -1)
 	{
-		if (Box[i][j].sumKord == figure)
+		if (Box[x][y].sumKord == figure)
 		{
 			if (Box[x][y].name == "BlKing.png" && Box[x][y - step * 2].WhDethNear)
 			{
@@ -3433,6 +3441,10 @@ void Game::CanDeath()
 					}*/
 				}
 			}
+			if (checking)
+			{
+				Box[i][j].attacker = -1;
+			}
 		}
 	}
 }
@@ -3633,6 +3645,16 @@ void Game::Shah()
 				{
 					BlKingInDang = true;
 					check = true;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < height; i++)
+				{
+					for (int j = 0; j < length; j++)
+					{
+						Path[i][j].name = " ";
+					}
 				}
 			}
 		}
@@ -4058,6 +4080,48 @@ void Game::CrRedFrame(int i, int j)
 		herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
 		herosprite.setPosition(Path[i][j].sizeX, Path[i][j].sizeY);//задаем начальные координаты появления спрайта
 		window.draw(herosprite);//выводим спрайт на экран
+	}
+}
+bool Game::IsDang(int xM, int yM, int xN, int yN)
+{
+	std::string tempName = Box[xN][yN].name;
+	int tempColor = Box[xN][yN].color;
+	int tempMoves = Box[xN][yN].moves;
+	Box[xN][yN].name = Box[xM][yM].name;
+	Box[xN][yN].color = Box[xM][yM].color;
+	Box[xN][yN].moves = Box[xM][yM].moves;
+	Box[xM][yM].name = " ";
+	Box[xM][yM].color = 0;
+	CanDeath();
+	if (Box[xN][yN].color == -1 && !BlKingInDang)
+	{
+		Box[xM][yM].name = Box[xN][yN].name;
+		Box[xM][yM].color = Box[xN][yN].color;
+		Box[xM][yM].moves = Box[xN][yN].moves;
+		Box[xN][yN].name = tempName;
+		Box[xN][yN].color = tempColor;
+		Box[xN][yN].moves = tempMoves;
+		return true;
+	}
+	else if (Box[xN][yN].color == 1 && !WhKingInDang)
+	{
+		Box[xM][yM].name = Box[xN][yN].name;
+		Box[xM][yM].color = Box[xN][yN].color;
+		Box[xM][yM].moves = Box[xN][yN].moves;
+		Box[xN][yN].name = tempName;
+		Box[xN][yN].color = tempColor;
+		Box[xN][yN].moves = tempMoves;
+		return true;
+	}
+	else
+	{
+		Box[xM][yM].name = Box[xN][yN].name;
+		Box[xM][yM].color = Box[xN][yN].color;
+		Box[xM][yM].moves = Box[xN][yN].moves;
+		Box[xN][yN].name = tempName;
+		Box[xN][yN].color = tempColor;
+		Box[xN][yN].moves = tempMoves;
+		return false;
 	}
 }
 void Game::Start()
