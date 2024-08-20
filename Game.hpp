@@ -40,6 +40,7 @@ public:
 	bool BlCheckmate = false;
 	void WrPath();
 	void CrRedFrame(int i, int j);
+	bool IsDang(int xM, int yM, int xN, int yN);
 private:
 
 };
