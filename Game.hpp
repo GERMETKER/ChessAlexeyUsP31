@@ -41,6 +41,8 @@ public:
 	void WrPath();
 	void CrRedFrame(int i, int j);
 	bool IsDang(int xM, int yM, int xN, int yN);
+	void IsDeff();
+	void DeffShah();
 private:
 
 };
