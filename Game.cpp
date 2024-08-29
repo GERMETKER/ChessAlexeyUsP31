@@ -2,7 +2,7 @@
 #include "Frames.hpp"
 #include "Button.hpp"
 #include "Attack.hpp"
-using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать sf::
+using namespace sf;
 Point Box[height][length];
 Point Dox[height][length];
 Frames Places[height][length];
@@ -11,159 +11,177 @@ Attack Path[height][length];
 bool WhKingInDang = false;
 bool BlKingInDang = false;
 int kingWay = 0;
-sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Window"); //увеличили для удобства размер окна
+sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Window");
 int figure = -1;
 int bestPuwn = -1;
 int schet = 1;
 bool check = false;
 bool WhDeffCheck = false;
 bool BlDeffCheck = false;
-
+bool menu = true;
+bool pause = false;
 void Game::CrChessDesk()
 {
-	//Render window(sf::VideoMode(1920, 1080), "SFML Window"); //увеличили для удобства размер окна
+	//Render window(sf::VideoMode(1920, 1080), "SFML Window");
 	RenderWindow& win2 = window;
-	Image heroimage; //создаем объект Image (изображение)
-	heroimage.loadFromFile("ChessDesk.png");//загружаем в него файл
+	Image heroimage;
+	heroimage.loadFromFile("ChessDesk.png");
 
-	Texture herotexture;//создаем объект Texture (текстура)
-	herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+	Texture herotexture;
+	herotexture.loadFromImage(heroimage);
 
-	Sprite herosprite;//создаем объект Sprite(спрайт)
-	herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-	herosprite.setPosition(510, 25);//задаем начальные координаты появления спрайта
+	Sprite herosprite;
+	herosprite.setTexture(herotexture);
+	herosprite.setPosition(510, 25);
 
 	while (window.isOpen())
 	{
-		if (!BlCheckmate && !WhCheckmate)
+		Vector2i mousePos = Mouse::getPosition(window);
+		window.clear(Color::White);
+		if (menu)
 		{
-			Vector2i mousePos = Mouse::getPosition(window);
-			window.clear(Color::White);
-			window.draw(herosprite);//выводим спрайт на экран
-			WrMove();
-			Shah();
-			CanDeath();
-			CrSprites(mousePos);
-			for (int i = 0; i < height; i++)
-			{
-				for (int j = 0; j < length; j++)
-				{
-					if (Box[i][j].name == "BlPuwn.png")
-					{
-						if (i == 7)
-						{
-							bestPuwn = Box[i][j].sumKord;
-							ChangeFigure(i, j, Box[i][j].color, mousePos);
-						}
-					}
-					else if (Box[i][j].name == "WhPuwn.png")
-					{
-						if (i == 0)
-						{
-							bestPuwn = Box[i][j].sumKord;
-							ChangeFigure(i, j, Box[i][j].color, mousePos);
-						}
-					}
-				}
-			}
-			if (check)
-			{
-				WrPath();
-				WrCheck(mousePos);
-			}
-			IfChoose(mousePos);
-			window.display();
-			for (int i = 0; i < height; i++)
-			{
-				for (int j = 0; j < length; j++)
-				{
-					if (figure == Box[i][j].sumKord)
-					{
-						Box[i][j].choose = true;
-					}
-				}
-			}
+			Menu(mousePos);
 		}
 		else
 		{
-			Vector2i mousePos = Mouse::getPosition(window);
-			window.clear(Color::White);
-			if (BlCheckmate)
+			if (pause)
 			{
-
-				Font font;//шрифт 
-				font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-				Text text("", font, 200);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
-				text.setFillColor(sf::Color::Black);
-				text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-				text.setString("Black Won");//задает строку тексту
-				text.setPosition(375, 100);//задаем позицию текста, центр камеры
-				Image revImage; //создаем объект Image (изображение)
-				revImage.loadFromFile("Revard.png");//загружаем в него файл
-				Texture revTexture;//создаем объект Texture (текстура)
-				revTexture.loadFromImage(revImage);//передаем в него объект Image (изображения)
-				Sprite revSprite;//создаем объект Sprite(спрайт)
-				revSprite.setTexture(revTexture);//передаём в него объект Texture (текстуры)
-				revSprite.setPosition(810, 500);//задаем начальные координаты появления спрайта
-				sf::RectangleShape shape(sf::Vector2f(250, 150));
-				shape.setPosition(100, 800);
-				shape.setFillColor(Color::White);
-				window.draw(shape);
-				Font exfont;//шрифт 
-				exfont.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-				Text extext("", exfont, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
-				extext.setFillColor(sf::Color::Black);
-				extext.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-				extext.setString("Exit");//задает строку тексту
-				extext.setPosition(100, 800);//задаем позицию текста, центр камеры
-				window.draw(extext);//рисую этот текст
-				window.draw(herosprite);//выводим спрайт на экран
-				window.draw(revSprite);//рисую этот текст
-				window.draw(extext);//рисую этот текст
-				window.draw(text);//рисую этот текст
-				window.display();
-				if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
-				{
-					window.close();
-				}
+				Pause(mousePos);
 			}
-			else if (WhCheckmate)
+			else
 			{
-
-				Font font;//шрифт 
-				font.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-				Text text("", font, 200);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
-				text.setFillColor(sf::Color::Black);
-				text.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-				text.setString("White Won");//задает строку тексту
-				text.setPosition(375, 100);//задаем позицию текста, центр камеры
-				Image revImage; //создаем объект Image (изображение)
-				revImage.loadFromFile("Revard.png");//загружаем в него файл
-				Texture revTexture;//создаем объект Texture (текстура)
-				revTexture.loadFromImage(revImage);//передаем в него объект Image (изображения)
-				Sprite revSprite;//создаем объект Sprite(спрайт)
-				revSprite.setTexture(revTexture);//передаём в него объект Texture (текстуры)
-				revSprite.setPosition(810, 500);//задаем начальные координаты появления спрайта
-				sf::RectangleShape shape(sf::Vector2f(250, 150));
-				shape.setPosition(100, 800);
-				shape.setFillColor(Color::White);
-				window.draw(shape);
-				Font exfont;//шрифт 
-				exfont.loadFromFile("Sunday-Regular.ttf");//передаем нашему шрифту файл шрифта
-				Text extext("", exfont, 100);//создаем объект текст. закидываем в объект текст строку, шрифт, размер шрифта(в пикселях);//сам объект текст (не строка)
-				extext.setFillColor(sf::Color::Black);
-				extext.setStyle(sf::Text::Bold);//жирный и подчеркнутый текст. по умолчанию он "худой":)) и не подчеркнутый
-				extext.setString("Exit");//задает строку тексту
-				extext.setPosition(100, 800);//задаем позицию текста, центр камеры
-				window.draw(extext);//рисую этот текст
-				window.draw(herosprite);//выводим спрайт на экран
-				window.draw(revSprite);//рисую этот текст
-				window.draw(extext);//рисую этот текст
-				window.draw(text);//рисую этот текст
-				window.display();
-				if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
+				if (!BlCheckmate && !WhCheckmate)
 				{
-					window.close();
+					window.draw(herosprite);
+					WrMove();
+					Shah();
+					CanDeath();
+					CrSprites(mousePos);
+					for (int i = 0; i < height; i++)
+					{
+						for (int j = 0; j < length; j++)
+						{
+							if (Box[i][j].name == "BlPuwn.png")
+							{
+								if (i == 7)
+								{
+									bestPuwn = Box[i][j].sumKord;
+									ChangeFigure(i, j, Box[i][j].color, mousePos);
+								}
+							}
+							else if (Box[i][j].name == "WhPuwn.png")
+							{
+								if (i == 0)
+								{
+									bestPuwn = Box[i][j].sumKord;
+									ChangeFigure(i, j, Box[i][j].color, mousePos);
+								}
+							}
+						}
+					}
+					if (check)
+					{
+						WrPath();
+						WrCheck(mousePos);
+					}
+					IfChoose(mousePos);
+					window.display();
+					for (int i = 0; i < height; i++)
+					{
+						for (int j = 0; j < length; j++)
+						{
+							if (figure == Box[i][j].sumKord)
+							{
+								Box[i][j].choose = true;
+							}
+						}
+					}
+				}
+				else
+				{
+					if (BlCheckmate)
+					{
+
+						Font font;
+						font.loadFromFile("Sunday-Regular.ttf");
+						Text text("", font, 200);
+						text.setFillColor(sf::Color::Black);
+						text.setStyle(sf::Text::Bold);
+						text.setString("Black Won");
+						text.setPosition(375, 100);
+						Image revImage;
+						revImage.loadFromFile("Revard.png");
+						Texture revTexture;
+						revTexture.loadFromImage(revImage);
+						Sprite revSprite;
+						revSprite.setTexture(revTexture);
+						revSprite.setPosition(810, 500);
+						sf::RectangleShape shape(sf::Vector2f(250, 150));
+						shape.setPosition(100, 800);
+						shape.setFillColor(Color::White);
+						window.draw(shape);
+						Font exfont;//шрифт 
+						exfont.loadFromFile("Sunday-Regular.ttf");
+						Text extext("", exfont, 100);
+						extext.setFillColor(sf::Color::Black);
+						extext.setStyle(sf::Text::Bold);
+						extext.setString("Exit");
+						extext.setPosition(100, 800);
+						window.draw(extext);
+						window.draw(herosprite);
+						window.draw(revSprite);
+						window.draw(extext);
+						window.draw(text);
+						window.display();
+						if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
+						{
+							window.close();
+						}
+					}
+					else if (WhCheckmate)
+					{
+
+						Font font;
+						font.loadFromFile("Sunday-Regular.ttf");
+						Text text("", font, 200);
+						text.setFillColor(sf::Color::Black);
+						text.setStyle(sf::Text::Bold);
+						text.setString("White Won");
+						text.setPosition(375, 100);
+						Image revImage;
+						revImage.loadFromFile("Revard.png");
+						Texture revTexture;
+						revTexture.loadFromImage(revImage);
+						Sprite revSprite;
+						revSprite.setTexture(revTexture);
+						revSprite.setPosition(810, 500);
+						sf::RectangleShape shape(sf::Vector2f(250, 150));
+						shape.setPosition(100, 800);
+						shape.setFillColor(Color::White);
+						window.draw(shape);
+						Font exfont;
+						exfont.loadFromFile("Sunday-Regular.ttf");
+						Text extext("", exfont, 100);
+						extext.setFillColor(sf::Color::Black);
+						extext.setStyle(sf::Text::Bold);
+						extext.setString("Exit");
+						extext.setPosition(100, 800);
+						window.draw(extext);
+						window.draw(herosprite);
+						window.draw(revSprite);
+						window.draw(extext);
+						window.draw(text);
+						window.display();
+						if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
+						{
+							window.close();
+						}
+					}
+				}
+				if (Keyboard::isKeyPressed(Keyboard::Escape))
+				{
+					pause = true;
+					//window.close();
 				}
 			}
 		}
@@ -1259,70 +1277,71 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
 						{
 							if (IsDang(i, j, x, y))
 							{
-							if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
-							{
-								/*MakeMove = Time;
-								figure = -1;*/
-							}
-							else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
-							{
-								/*MakeMove = Time;
-								figure = -1;*/
-							}
-							else
-							{
-								if (x == 0 && y == 5)
+
+								if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
 								{
-									Ways[0][5].name = "BlFrame.png";
-									Ways[0][5].name = "BlFrame.png";
-									Ways[0][5].sizeX = Box[0][5].sizeX;
-									Ways[0][5].sizeY = Box[0][5].sizeY;
-									Image heroimage; //создаем объект Image (изображение)
-									heroimage.loadFromFile(Ways[0][5].name);//загружаем в него файл
-									Texture herotexture;//создаем объект Texture (текстура)
-									herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-									Sprite herosprite;//создаем объект Sprite(спрайт)
-									herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-									herosprite.setPosition(Ways[0][5].sizeX, Ways[0][5].sizeY);//задаем начальные координаты появления спрайта
-									window.draw(herosprite);
-									if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
-									{
-										ChangePlace(i, j, x, y);
-										for (int g = 0; g < height; g++)
-										{
-											for (int h = 0; h < height; h++)
-											{
-												Box[g][h].TakeOnMove = false;
-											}
-										}
-									}
+									/*MakeMove = Time;
+									figure = -1;*/
+								}
+								else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+								{
+									/*MakeMove = Time;
+									figure = -1;*/
 								}
 								else
 								{
-									Ways[x][y].name = "BlFrame.png";
-									Ways[x][y].sizeX = Box[x][y].sizeX;
-									Ways[x][y].sizeY = Box[x][y].sizeY;
-									Image heroimage; //создаем объект Image (изображение)
-									heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-									Texture herotexture;//создаем объект Texture (текстура)
-									herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-									Sprite herosprite;//создаем объект Sprite(спрайт)
-									herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-									herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
-									window.draw(herosprite);
-									if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+									if (x == 0 && y == 5)
 									{
-										ChangePlace(i, j, x, y);
-										for (int g = 0; g < height; g++)
+										Ways[0][5].name = "BlFrame.png";
+										Ways[0][5].name = "BlFrame.png";
+										Ways[0][5].sizeX = Box[0][5].sizeX;
+										Ways[0][5].sizeY = Box[0][5].sizeY;
+										Image heroimage; //создаем объект Image (изображение)
+										heroimage.loadFromFile(Ways[0][5].name);//загружаем в него файл
+										Texture herotexture;//создаем объект Texture (текстура)
+										herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+										Sprite herosprite;//создаем объект Sprite(спрайт)
+										herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+										herosprite.setPosition(Ways[0][5].sizeX, Ways[0][5].sizeY);//задаем начальные координаты появления спрайта
+										window.draw(herosprite);
+										if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
 										{
-											for (int h = 0; h < height; h++)
+											ChangePlace(i, j, x, y);
+											for (int g = 0; g < height; g++)
 											{
-												Box[g][h].TakeOnMove = false;
+												for (int h = 0; h < height; h++)
+												{
+													Box[g][h].TakeOnMove = false;
+												}
+											}
+										}
+									}
+									else
+									{
+										Ways[x][y].name = "BlFrame.png";
+										Ways[x][y].sizeX = Box[x][y].sizeX;
+										Ways[x][y].sizeY = Box[x][y].sizeY;
+										Image heroimage; //создаем объект Image (изображение)
+										heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
+										Texture herotexture;//создаем объект Texture (текстура)
+										herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+										Sprite herosprite;//создаем объект Sprite(спрайт)
+										herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+										herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+										window.draw(herosprite);
+										if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+										{
+											ChangePlace(i, j, x, y);
+											for (int g = 0; g < height; g++)
+											{
+												for (int h = 0; h < height; h++)
+												{
+													Box[g][h].TakeOnMove = false;
+												}
 											}
 										}
 									}
 								}
-							}
 							}
 						}
 					}
@@ -4169,8 +4188,8 @@ bool Game::IsDang(int xM, int yM, int xN, int yN)
 		Dox[xN][yN].name = tempName;
 		Dox[xN][yN].color = tempColor;
 		Dox[xN][yN].moves = tempMoves;
-		//WhDeffCheck = false;
-		//BlDeffCheck = false;
+		WhDeffCheck = false;
+		BlDeffCheck = false;
 		return false;
 	}
 }
@@ -5853,6 +5872,116 @@ void Game::DeffShah()
 			//	}
 			//}
 		}
+	}
+}
+
+void Game::Menu(Vector2i mousePos)
+{
+	Image heroimage; //создаем объект Image (изображение)
+	heroimage.loadFromFile("Ikon.png");//загружаем в него файл
+
+	Texture herotexture;//создаем объект Texture (текстура)
+	herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+
+	Sprite herosprite;//создаем объект Sprite(спрайт)
+	herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+	herosprite.setPosition(200, 200);//задаем начальные координаты появления спрайта
+
+	Font font;
+	font.loadFromFile("Sunday-Regular.ttf");
+	Text text("", font, 300);
+	text.setFillColor(sf::Color::Black);
+	text.setStyle(sf::Text::Bold);
+	text.setString("CHESS");
+	text.setPosition(1020, 25);
+
+	sf::RectangleShape stshape(sf::Vector2f(450, 270));
+	stshape.setPosition(1400, 400);
+	stshape.setFillColor(Color::White);
+	Font stfont;
+	stfont.loadFromFile("Sunday-Regular.ttf");
+	Text sttext("", stfont, 200);
+	sttext.setFillColor(sf::Color::Black);
+	sttext.setStyle(sf::Text::Bold);
+	sttext.setString("Play");
+	sttext.setPosition(1400, 400);
+
+
+	sf::RectangleShape shape(sf::Vector2f(450, 270));
+	shape.setPosition(1400, 700);
+	shape.setFillColor(Color::White);
+	Font exfont;
+	exfont.loadFromFile("Sunday-Regular.ttf");
+	Text extext("", exfont, 200);
+	extext.setFillColor(sf::Color::Black);
+	extext.setStyle(sf::Text::Bold);
+	extext.setString("Exit");
+	extext.setPosition(1400, 700);
+
+	window.draw(text);
+	window.draw(herosprite);
+	window.draw(shape);
+	window.draw(extext);
+	window.draw(stshape);
+	window.draw(sttext);
+	window.display();
+	if (Mouse::isButtonPressed(Mouse::Left) && stshape.getGlobalBounds().contains(mousePos.x, mousePos.y))
+	{
+		menu = false;
+	}
+	else if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
+	{
+		window.close();
+	}
+}
+
+void Game::Pause(Vector2i mousePos)
+{
+	window.clear(Color::White);
+	Font font;
+	font.loadFromFile("Sunday-Regular.ttf");
+	Text text("", font, 250);
+	text.setFillColor(sf::Color::Black);
+	text.setStyle(sf::Text::Bold);
+	text.setString("PAUSE");
+	text.setPosition(600, 25);
+
+	sf::RectangleShape stshape(sf::Vector2f(450, 270));
+	stshape.setPosition(540, 400);
+	stshape.setFillColor(Color::White);
+	Font stfont;
+	stfont.loadFromFile("Sunday-Regular.ttf");
+	Text sttext("", stfont, 200);
+	sttext.setFillColor(sf::Color::Black);
+	sttext.setStyle(sf::Text::Bold);
+	sttext.setString("Continue");
+	sttext.setPosition(540, 400);
+
+
+	sf::RectangleShape shape(sf::Vector2f(450, 270));
+	shape.setPosition(760, 700);
+	shape.setFillColor(Color::White);
+	Font exfont;
+	exfont.loadFromFile("Sunday-Regular.ttf");
+	Text extext("", exfont, 200);
+	extext.setFillColor(sf::Color::Black);
+	extext.setStyle(sf::Text::Bold);
+	extext.setString("Exit");
+	extext.setPosition(760, 700);
+
+	window.draw(text);
+	window.draw(shape);
+	window.draw(extext);
+	window.draw(stshape);
+	window.draw(sttext);
+	window.display();
+	if (Mouse::isButtonPressed(Mouse::Left) && stshape.getGlobalBounds().contains(mousePos.x, mousePos.y))
+	{
+		pause = false;
+	}
+	else if (Mouse::isButtonPressed(Mouse::Left) && shape.getGlobalBounds().contains(mousePos.x, mousePos.y))
+	{
+		window.close();
 	}
 }
 
