@@ -43,6 +43,8 @@ public:
 	bool IsDang(int xM, int yM, int xN, int yN);
 	void IsDeff();
 	void DeffShah();
+	void Menu(Vector2i mousePos);
+	void Pause(Vector2i mousePos);
 private:
 
 };
