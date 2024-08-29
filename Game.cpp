@@ -4,6 +4,7 @@
 #include "Attack.hpp"
 using namespace sf;//включаем пространство имен sf, чтобы постоянно не писать sf::
 Point Box[height][length];
+Point Dox[height][length];
 Frames Places[height][length];
 MoveWay Ways[height][length];
 Attack Path[height][length];
@@ -15,7 +16,8 @@ int figure = -1;
 int bestPuwn = -1;
 int schet = 1;
 bool check = false;
-bool checking = false;
+bool WhDeffCheck = false;
+bool BlDeffCheck = false;
 
 void Game::CrChessDesk()
 {
@@ -353,18 +355,18 @@ void Game::CrPoints()
 	Box[6][2].sizeX = 745;
 	Box[6][2].sizeY = 693;
 
-	/*Box[6][3].name = "WhPuwn.png";
-	Box[6][3].color = 1;*/
+	Box[6][3].name = "WhPuwn.png";
+	Box[6][3].color = 1;
 	Box[6][3].sizeX = 845;
 	Box[6][3].sizeY = 693;
 
-	/*Box[6][4].name = "WhPuwn.png";
-	Box[6][4].color = 1;*/
+	Box[6][4].name = "WhPuwn.png";
+	Box[6][4].color = 1;
 	Box[6][4].sizeX = 945;
 	Box[6][4].sizeY = 693;
 
-	/*Box[6][5].name = "WhPuwn.png";
-	Box[6][5].color = 1;*/
+	Box[6][5].name = "WhPuwn.png";
+	Box[6][5].color = 1;
 	Box[6][5].sizeX = 1045;
 	Box[6][5].sizeY = 693;
 
@@ -399,8 +401,7 @@ void Game::CrPoints()
 	Box[7][3].sizeX = 845;
 	Box[7][3].sizeY = 798;
 
-	//[7][4].name = "WhKing.png";
-	Box[7][4].name = "WhQueen.png";
+	Box[7][4].name = "WhKing.png";
 	Box[7][4].color = 1;
 	Box[7][4].sizeX = 945;
 	Box[7][4].sizeY = 798;
@@ -419,6 +420,20 @@ void Game::CrPoints()
 	Box[7][7].color = 1;
 	Box[7][7].sizeX = 1245;
 	Box[7][7].sizeY = 798;
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < length; j++)
+		{
+			Dox[i][j].arrX = Box[i][j].arrX;
+			Dox[i][j].arrY = Box[i][j].arrY;
+			Dox[i][j].sumKord = Box[i][j].sumKord;
+			Dox[i][j].name = Box[i][j].name;
+			Dox[i][j].color = Box[i][j].color;
+			Dox[i][j].sizeX = Box[i][j].sizeX;
+			Dox[i][j].sizeY = Box[i][j].sizeY;
+			Dox[i][j].moves = Box[i][j].moves;
+		}
+	}
 }
 
 void Game::CrSprites(Vector2i mousePos)
@@ -1212,6 +1227,20 @@ void Game::ChangePlace(int xM, int yM, int xN, int yN)
 		MakeMove = Time;
 		figure = -1;
 	}
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < length; j++)
+		{
+			Dox[i][j].arrX = Box[i][j].arrX;
+			Dox[i][j].arrY = Box[i][j].arrY;
+			Dox[i][j].sumKord = Box[i][j].sumKord;
+			Dox[i][j].name = Box[i][j].name;
+			Dox[i][j].color = Box[i][j].color;
+			Dox[i][j].sizeX = Box[i][j].sizeX;
+			Dox[i][j].sizeY = Box[i][j].sizeY;
+			Dox[i][j].moves = Box[i][j].moves;
+		}
+	}
 	CanDeath();
 	Shah();
 }
@@ -1220,83 +1249,84 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y)
 {
 	if (x < 8 && x > -1 && y < 8 && y > -1)
 	{
-		//if (IsDang(i, j, x, y))
-		//{
 			if (!check)
 			{
-				if (Box[i][j].sumKord == figure)
-				{
-					if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
+				/*if (IsDang(i, j, x, y))
+				{*/
+					if (Box[i][j].sumKord == figure)
 					{
-						/*if (IsDang(i, j, x, y))
-						{*/
-						if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+						if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
 						{
-							/*MakeMove = Time;
-							figure = -1;*/
-						}
-						else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
-						{
-							/*MakeMove = Time;
-							figure = -1;*/
-						}
-						else
-						{
-							if (x == 0 && y == 5)
+							if (IsDang(i, j, x, y))
 							{
-								Ways[0][5].name = "BlFrame.png";
-								Ways[0][5].name = "BlFrame.png";
-								Ways[0][5].sizeX = Box[0][5].sizeX;
-								Ways[0][5].sizeY = Box[0][5].sizeY;
-								Image heroimage; //создаем объект Image (изображение)
-								heroimage.loadFromFile(Ways[0][5].name);//загружаем в него файл
-								Texture herotexture;//создаем объект Texture (текстура)
-								herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-								Sprite herosprite;//создаем объект Sprite(спрайт)
-								herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-								herosprite.setPosition(Ways[0][5].sizeX, Ways[0][5].sizeY);//задаем начальные координаты появления спрайта
-								window.draw(herosprite);
-								if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
-								{
-									ChangePlace(i, j, x, y);
-									for (int g = 0; g < height; g++)
-									{
-										for (int h = 0; h < height; h++)
-										{
-											Box[g][h].TakeOnMove = false;
-										}
-									}
-								}
+							if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+							{
+								/*MakeMove = Time;
+								figure = -1;*/
+							}
+							else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+							{
+								/*MakeMove = Time;
+								figure = -1;*/
 							}
 							else
 							{
-								Ways[x][y].name = "BlFrame.png";
-								Ways[x][y].sizeX = Box[x][y].sizeX;
-								Ways[x][y].sizeY = Box[x][y].sizeY;
-								Image heroimage; //создаем объект Image (изображение)
-								heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-								Texture herotexture;//создаем объект Texture (текстура)
-								herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-								Sprite herosprite;//создаем объект Sprite(спрайт)
-								herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-								herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
-								window.draw(herosprite);
-								if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+								if (x == 0 && y == 5)
 								{
-									ChangePlace(i, j, x, y);
-									for (int g = 0; g < height; g++)
+									Ways[0][5].name = "BlFrame.png";
+									Ways[0][5].name = "BlFrame.png";
+									Ways[0][5].sizeX = Box[0][5].sizeX;
+									Ways[0][5].sizeY = Box[0][5].sizeY;
+									Image heroimage; //создаем объект Image (изображение)
+									heroimage.loadFromFile(Ways[0][5].name);//загружаем в него файл
+									Texture herotexture;//создаем объект Texture (текстура)
+									herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+									Sprite herosprite;//создаем объект Sprite(спрайт)
+									herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+									herosprite.setPosition(Ways[0][5].sizeX, Ways[0][5].sizeY);//задаем начальные координаты появления спрайта
+									window.draw(herosprite);
+									if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
 									{
-										for (int h = 0; h < height; h++)
+										ChangePlace(i, j, x, y);
+										for (int g = 0; g < height; g++)
 										{
-											Box[g][h].TakeOnMove = false;
+											for (int h = 0; h < height; h++)
+											{
+												Box[g][h].TakeOnMove = false;
+											}
+										}
+									}
+								}
+								else
+								{
+									Ways[x][y].name = "BlFrame.png";
+									Ways[x][y].sizeX = Box[x][y].sizeX;
+									Ways[x][y].sizeY = Box[x][y].sizeY;
+									Image heroimage; //создаем объект Image (изображение)
+									heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
+									Texture herotexture;//создаем объект Texture (текстура)
+									herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+									Sprite herosprite;//создаем объект Sprite(спрайт)
+									herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+									herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+									window.draw(herosprite);
+									if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+									{
+										ChangePlace(i, j, x, y);
+										for (int g = 0; g < height; g++)
+										{
+											for (int h = 0; h < height; h++)
+											{
+												Box[g][h].TakeOnMove = false;
+											}
 										}
 									}
 								}
 							}
+							}
 						}
-						//}
 					}
-				}
+				//}
 			}
 			else
 			{
@@ -1458,59 +1488,62 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, double zero)
 	{
 		if (!check)
 		{
-			if (Box[i][j].sumKord == figure)
+			if (IsDang(i, j, x, y))
 			{
-				if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+				if (Box[i][j].sumKord == figure)
 				{
-					/*MakeMove = Time;
-					figure = -1;*/
-				}
-				else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
-				{
-					//MakeMove = Time;
-					//figure = -1;
-				}
-				else
-				{
-					Ways[x][y].name = "BlFrame.png";
-					Ways[x][y].sizeX = Box[x][y].sizeX;
-					Ways[x][y].sizeY = Box[x][y].sizeY;
-					Image heroimage; //создаем объект Image (изображение)
-					heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-					Texture herotexture;//создаем объект Texture (текстура)
-					herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-					Sprite herosprite;//создаем объект Sprite(спрайт)
-					herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-					herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
-					window.draw(herosprite);
-					int n;
-					if (zero == 1.0)
+					if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
 					{
-						n = 1;
+						/*MakeMove = Time;
+						figure = -1;*/
 					}
-					else if (zero == -1.0)
+					else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
 					{
-						n = -1;
+						//MakeMove = Time;
+						//figure = -1;
 					}
-					if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+					else
 					{
-						ChangePlace(i, j + n, x, y);
-						if (Time > 0)
+						Ways[x][y].name = "BlFrame.png";
+						Ways[x][y].sizeX = Box[x][y].sizeX;
+						Ways[x][y].sizeY = Box[x][y].sizeY;
+						Image heroimage; //создаем объект Image (изображение)
+						heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
+						Texture herotexture;//создаем объект Texture (текстура)
+						herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+						Sprite herosprite;//создаем объект Sprite(спрайт)
+						herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+						herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+						window.draw(herosprite);
+						int n;
+						if (zero == 1.0)
 						{
-							Time = -1;
-							MakeMove = 0;
+							n = 1;
 						}
-						else
+						else if (zero == -1.0)
 						{
-							Time = 1;
-							MakeMove = 0;
+							n = -1;
 						}
-						ChangePlace(i, j, x, y);
-						for (int g = 0; g < height; g++)
+						if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
 						{
-							for (int h = 0; h < height; h++)
+							ChangePlace(i, j + n, x, y);
+							if (Time > 0)
 							{
-								Box[g][h].TakeOnMove = false;
+								Time = -1;
+								MakeMove = 0;
+							}
+							else
+							{
+								Time = 1;
+								MakeMove = 0;
+							}
+							ChangePlace(i, j, x, y);
+							for (int g = 0; g < height; g++)
+							{
+								for (int h = 0; h < height; h++)
+								{
+									Box[g][h].TakeOnMove = false;
+								}
 							}
 						}
 					}
@@ -1591,44 +1624,47 @@ void Game::SelWays(Vector2i mousePos, int i, int j, int x, int y, std::string ze
 	{
 		if (!check)
 		{
-			if (Box[i][j].sumKord == figure)
+			if (IsDang(i, j, x, y))
 			{
-				if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
+				if (Box[i][j].sumKord == figure)
 				{
-					if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
+					if (Box[x][y].name != "BlKing.png" && Box[x][y].name != "WhKing.png")
 					{
-						/*MakeMove = Time;
-						figure = -1;*/
-					}
-					else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
-					{
-						//MakeMove = Time;
-						//figure = -1;
-					}
-					else
-					{
-						Ways[x][y].name = "BlFrame.png";
-						Ways[x][y].sizeX = Box[x][y].sizeX;
-						Ways[x][y].sizeY = Box[x][y].sizeY;
-						Image heroimage; //создаем объект Image (изображение)
-						heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
-						Texture herotexture;//создаем объект Texture (текстура)
-						herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
-						Sprite herosprite;//создаем объект Sprite(спрайт)
-						herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
-						herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
-						window.draw(herosprite);
-						if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
+						if (Box[i][j].name == "BlKing.png" && Box[x][y].WhDethNear)
 						{
-							for (int g = 0; g < height; g++)
+							/*MakeMove = Time;
+							figure = -1;*/
+						}
+						else if (Box[i][j].name == "WhKing.png" && Box[x][y].BlDethNear)
+						{
+							//MakeMove = Time;
+							//figure = -1;
+						}
+						else
+						{
+							Ways[x][y].name = "BlFrame.png";
+							Ways[x][y].sizeX = Box[x][y].sizeX;
+							Ways[x][y].sizeY = Box[x][y].sizeY;
+							Image heroimage; //создаем объект Image (изображение)
+							heroimage.loadFromFile(Ways[x][y].name);//загружаем в него файл
+							Texture herotexture;//создаем объект Texture (текстура)
+							herotexture.loadFromImage(heroimage);//передаем в него объект Image (изображения)
+							Sprite herosprite;//создаем объект Sprite(спрайт)
+							herosprite.setTexture(herotexture);//передаём в него объект Texture (текстуры)
+							herosprite.setPosition(Ways[x][y].sizeX, Ways[x][y].sizeY);//задаем начальные координаты появления спрайта
+							window.draw(herosprite);
+							if (Mouse::isButtonPressed(Mouse::Left) && herosprite.getGlobalBounds().contains(mousePos.x, mousePos.y))
 							{
-								for (int h = 0; h < height; h++)
+								for (int g = 0; g < height; g++)
 								{
-									Box[g][h].TakeOnMove = false;
+									for (int h = 0; h < height; h++)
+									{
+										Box[g][h].TakeOnMove = false;
+									}
 								}
+								Box[x][y].TakeOnMove = true;
+								ChangePlace(i, j, x, y);
 							}
-							Box[x][y].TakeOnMove = true;
-							ChangePlace(i, j, x, y);
 						}
 					}
 				}
@@ -1801,6 +1837,20 @@ void Game::Castling(int xM, int yM, int xN, int yN, int step)
 		Time = 1;
 		MakeMove = Time;
 		figure = -1;
+	}
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < length; j++)
+		{
+			Dox[i][j].arrX = Box[i][j].arrX;
+			Dox[i][j].arrY = Box[i][j].arrY;
+			Dox[i][j].sumKord = Box[i][j].sumKord;
+			Dox[i][j].name = Box[i][j].name;
+			Dox[i][j].color = Box[i][j].color;
+			Dox[i][j].sizeX = Box[i][j].sizeX;
+			Dox[i][j].sizeY = Box[i][j].sizeY;
+			Dox[i][j].moves = Box[i][j].moves;
+		}
 	}
 	CanDeath();
 }
@@ -3441,10 +3491,6 @@ void Game::CanDeath()
 					}*/
 				}
 			}
-			if (checking)
-			{
-				Box[i][j].attacker = -1;
-			}
 		}
 	}
 }
@@ -4084,43 +4130,47 @@ void Game::CrRedFrame(int i, int j)
 }
 bool Game::IsDang(int xM, int yM, int xN, int yN)
 {
-	std::string tempName = Box[xN][yN].name;
-	int tempColor = Box[xN][yN].color;
-	int tempMoves = Box[xN][yN].moves;
-	Box[xN][yN].name = Box[xM][yM].name;
-	Box[xN][yN].color = Box[xM][yM].color;
-	Box[xN][yN].moves = Box[xM][yM].moves;
-	Box[xM][yM].name = " ";
-	Box[xM][yM].color = 0;
-	CanDeath();
-	if (Box[xN][yN].color == -1 && !BlKingInDang)
+	std::string tempName = Dox[xN][yN].name;
+	int tempColor = Dox[xN][yN].color;
+	int tempMoves = Dox[xN][yN].moves;
+	Dox[xN][yN].name = Dox[xM][yM].name;
+	Dox[xN][yN].color = Dox[xM][yM].color;
+	Dox[xN][yN].moves = Dox[xM][yM].moves;
+	Dox[xM][yM].name = " ";
+	Dox[xM][yM].color = 0;
+	//CanDeath();
+	//IsDeff();
+	DeffShah();
+	if (!BlDeffCheck && Dox[xN][yN].color == -1)
 	{
-		Box[xM][yM].name = Box[xN][yN].name;
-		Box[xM][yM].color = Box[xN][yN].color;
-		Box[xM][yM].moves = Box[xN][yN].moves;
-		Box[xN][yN].name = tempName;
-		Box[xN][yN].color = tempColor;
-		Box[xN][yN].moves = tempMoves;
+		Dox[xM][yM].name = Dox[xN][yN].name;
+		Dox[xM][yM].color = Dox[xN][yN].color;
+		Dox[xM][yM].moves = Dox[xN][yN].moves;
+		Dox[xN][yN].name = tempName;
+		Dox[xN][yN].color = tempColor;
+		Dox[xN][yN].moves = tempMoves;
 		return true;
 	}
-	else if (Box[xN][yN].color == 1 && !WhKingInDang)
+	else if (!WhDeffCheck && Dox[xN][yN].color == 1)
 	{
-		Box[xM][yM].name = Box[xN][yN].name;
-		Box[xM][yM].color = Box[xN][yN].color;
-		Box[xM][yM].moves = Box[xN][yN].moves;
-		Box[xN][yN].name = tempName;
-		Box[xN][yN].color = tempColor;
-		Box[xN][yN].moves = tempMoves;
+		Dox[xM][yM].name = Dox[xN][yN].name;
+		Dox[xM][yM].color = Dox[xN][yN].color;
+		Dox[xM][yM].moves = Dox[xN][yN].moves;
+		Dox[xN][yN].name = tempName;
+		Dox[xN][yN].color = tempColor;
+		Dox[xN][yN].moves = tempMoves;
 		return true;
 	}
 	else
 	{
-		Box[xM][yM].name = Box[xN][yN].name;
-		Box[xM][yM].color = Box[xN][yN].color;
-		Box[xM][yM].moves = Box[xN][yN].moves;
-		Box[xN][yN].name = tempName;
-		Box[xN][yN].color = tempColor;
-		Box[xN][yN].moves = tempMoves;
+		Dox[xM][yM].name = Dox[xN][yN].name;
+		Dox[xM][yM].color = Dox[xN][yN].color;
+		Dox[xM][yM].moves = Dox[xN][yN].moves;
+		Dox[xN][yN].name = tempName;
+		Dox[xN][yN].color = tempColor;
+		Dox[xN][yN].moves = tempMoves;
+		//WhDeffCheck = false;
+		//BlDeffCheck = false;
 		return false;
 	}
 }
@@ -4129,3 +4179,1680 @@ void Game::Start()
 	CrPoints();
 	CrChessDesk();
 }
+
+void Game::IsDeff()
+{
+
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < length; j++)
+		{
+			Dox[i][j].BlDethNear = false;
+			Dox[i][j].WhDethNear = false;
+		}
+	}
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < length; j++)
+		{
+			if (Dox[i][j].name == "WhPuwn.png") // Box[i][j].name == "BlPuwn.png" || 
+			{
+				if (Dox[i][j].moves == 0)
+				{
+					if (i - 1 < 8 && i - 1 > -1 && j - 1 < 8 && j - 1 > -1)
+					{
+						Dox[i - 1][j - 1].WhDethNear = true;
+						/*if (Dox[i - 1][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+						{
+							Dox[i - 1][j - 1].attacker = Dox[i][j].sumKord;
+						}
+						else if (Dox[i - 1][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+						{
+							Dox[i - 1][j - 1].attacker = Dox[i][j].sumKord;
+						}*/
+					}
+					if (i - 1 < 8 && i - 1 > -1 && j + 1 < 8 && j + 1 > -1)
+					{
+						Dox[i - 1][j + 1].WhDethNear = true;
+						/*if (Dox[i - 1][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+						{
+							Dox[i - 1][j + 1].attacker = Dox[i][j].sumKord;
+						}
+						else if (Dox[i - 1][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+						{
+							Dox[i - 1][j + 1].attacker = Dox[i][j].sumKord;
+						}*/
+					}
+
+				}
+				else
+				{
+					if (i - 1 < 8 && i - 1 > -1 && j - 1 < 8 && j - 1 > -1)
+					{
+						Dox[i - 1][j - 1].WhDethNear = true;
+						/*if (Dox[i - 1][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+						{
+							Dox[i - 1][j - 1].attacker = Dox[i][j].sumKord;
+						}
+						else if (Dox[i - 1][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+						{
+							Dox[i - 1][j - 1].attacker = Dox[i][j].sumKord;
+						}*/
+					}
+					if (i - 1 < 8 && i - 1 > -1 && j + 1 < 8 && j + 1 > -1)
+					{
+						Dox[i - 1][j + 1].WhDethNear = true;
+						/*if (Dox[i - 1][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+						{
+							Dox[i - 1][j + 1].attacker = Dox[i][j].sumKord;
+						}
+						else if (Dox[i - 1][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+						{
+							Dox[i - 1][j + 1].attacker = Dox[i][j].sumKord;
+						}*/
+					}
+				}
+			}
+			if (Dox[i][j].name == "BlPuwn.png") // Box[i][j].name == "BlPuwn.png" || 
+			{
+				if (Dox[i][j].moves == 0)
+				{
+					if (i + 1 < 8 && i + 1 > -1 && j - 1 < 8 && j - 1 > -1)
+					{
+						Dox[i + 1][j - 1].BlDethNear = true;
+						/*if (Dox[i + 1][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+						{
+							Dox[i + 1][j - 1].attacker = Dox[i][j].sumKord;
+						}
+						else if (Dox[i + 1][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+						{
+							Dox[i + 1][j - 1].attacker = Dox[i][j].sumKord;
+						}*/
+					}
+					if (i + 1 < 8 && i + 1 > -1 && j + 1 < 8 && j + 1 > -1)
+					{
+						Dox[i + 1][j + 1].BlDethNear = true;
+						/*if (Dox[i + 1][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+						{
+							Dox[i + 1][j + 1].attacker = Dox[i][j].sumKord;
+						}
+						else if (Dox[i + 1][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+						{
+							Dox[i + 1][j + 1].attacker = Dox[i][j].sumKord;
+						}*/
+
+					}
+				}
+				else
+				{
+					if (i + 1 < 8 && i + 1 > -1 && j - 1 < 8 && j - 1 > -1)
+					{
+						Dox[i + 1][j - 1].BlDethNear = true;
+						/*if (Dox[i + 1][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+						{
+							Dox[i + 1][j - 1].attacker = Dox[i][j].sumKord;
+						}
+						else if (Dox[i + 1][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+						{
+							Dox[i + 1][j - 1].attacker = Dox[i][j].sumKord;
+						}*/
+					}
+					if (i + 1 < 8 && i + 1 > -1 && j + 1 < 8 && j + 1 > -1)
+					{
+						Dox[i + 1][j + 1].BlDethNear = true;
+						/*if (Dox[i + 1][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+						{
+							Dox[i + 1][j + 1].attacker = Dox[i][j].sumKord;
+						}
+						else if (Dox[i + 1][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+						{
+							Dox[i + 1][j + 1].attacker = Dox[i][j].sumKord;
+						}*/
+					}
+				}
+			}
+			if (Dox[i][j].name == "WhBishop.png" || Dox[i][j].name == "BlBishop.png") // Box[i][j].name == "BlPuwn.png" || 
+			{
+				for (int z = -1; i + z > -1 && j + z > -1; z--)
+				{
+					if (Dox[i + z][j + z].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j + z].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j + z].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + z].WhDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + z].BlDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+
+							}
+						}
+					}
+					else// if (Box[i + z][j + z].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + z].WhDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + z].BlDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+				int g = 1;
+				for (int z = -1; i + z > -1 && j + g < 8; z--)
+				{
+					if (Dox[i + z][j + g].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j + g].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j + g].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j + g < 8 && j + g > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + g].WhDethNear = true;
+								/*if (Dox[i + z][j + g].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + g].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + g].BlDethNear = true;
+								/*if (Dox[i + z][j + g].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + g].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i + z][j + g].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j + g < 8 && j + g > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + g].WhDethNear = true;
+								/*if (Dox[i + z][j + g].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + g].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + g].BlDethNear = true;
+								/*if (Dox[i + z][j + g].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + g].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+					g++;
+				}
+				int h = -1;
+				for (int z = 1; i + z < 8 && j + h > -1; z++ || Dox[i][j].color == 1 && Dox[i + z][j + h].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j + h].name == "WhKing.png")
+				{
+					if (Dox[i + z][j + h].color == 0)
+					{
+						if (i + z < 8 && i + z > -1 && j + h < 8 && j + h > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + h].WhDethNear = true;
+								/*if (Dox[i + z][j + h].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + h].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + h].BlDethNear = true;
+								/*if (Dox[i + z][j + h].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + h].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i + z][j + h].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j + h < 8 && j + h > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + h].WhDethNear = true;
+								/*if (Dox[i + z][j + h].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + h].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + h].BlDethNear = true;
+								/*if (Dox[i + z][j + h].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + h].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+					h--;
+				}
+				for (int z = 1; i + z < 8 && j + z < 8; z++)
+				{
+					if (Dox[i + z][j + z].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j + z].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j + z].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + z].WhDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + 1][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + z].BlDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i + z][j + z].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + z].WhDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + z].BlDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+			}
+			if (Dox[i][j].name == "WhHorse.png" || Dox[i][j].name == "BlHorse.png")
+			{
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i - 2][j - 1].WhDethNear = true;
+					/*if (Dox[i - 2][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 2][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 2][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 2][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i - 2][j - 1].BlDethNear = true;
+					/*if (Dox[i - 2][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 2][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 2][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 2][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i - 2][j + 1].WhDethNear = true;
+					/*if (Dox[i - 2][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 2][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 2][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 2][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i - 2][j + 1].BlDethNear = true;
+					/*if (Dox[i - 2][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 2][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 2][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 2][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i - 1][j - 2].WhDethNear = true;
+					/*if (Dox[i - 1][j - 2].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j - 2].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j - 2].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j - 2].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i - 1][j - 2].BlDethNear = true;
+					/*if (Dox[i - 1][j - 2].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j - 2].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j - 2].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j - 2].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i + 1][j - 2].WhDethNear = true;
+					/*if (Dox[i + 1][j - 2].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j - 2].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j - 2].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j - 2].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i + 1][j - 2].BlDethNear = true;
+					/*if (Dox[i + 1][j - 2].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j - 2].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j - 2].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j - 2].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i + 2][j - 1].WhDethNear = true;
+					/*if (Dox[i + 2][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 2][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 2][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 2][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i + 2][j - 1].BlDethNear = true;
+					/*if (Dox[i + 2][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 2][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 2][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 2][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i + 2][j + 1].WhDethNear = true;
+					/*if (Dox[i + 2][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 2][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 2][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 2][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i + 2][j + 1].BlDethNear = true;
+					/*if (Dox[i + 2][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 2][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 2][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 2][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i - 1][j + 2].WhDethNear = true;
+					/*if (Dox[i - 1][j + 2].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j + 2].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j + 2].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j + 2].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i - 1][j + 2].BlDethNear = true;
+					/*if (Dox[i - 1][j + 2].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j + 2].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j + 2].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j + 2].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i + 1][j + 2].WhDethNear = true;
+					/*if (Dox[i + 1][j + 2].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j + 2].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j + 2].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j + 2].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i + 1][j + 2].BlDethNear = true;
+					/*if (Dox[i + 1][j + 2].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j + 2].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j + 2].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j + 2].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+
+			}
+			if (Dox[i][j].name == "WhQueen.png" || Dox[i][j].name == "BlQueen.png")
+			{
+				for (int z = -1; i + z > -1 && j + z > -1; z--)
+				{
+					if (Dox[i + z][j + z].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j + z].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j + z].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + z].WhDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + z].BlDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else
+					{
+						if (i + z < 8 && i + z > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + z].WhDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + z].BlDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+				int g = 1;
+				for (int z = -1; i + z > -1 && j + g < 8; z--)
+				{
+					if (Dox[i + z][j + g].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j + g].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j + g].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j + g < 8 && j + g > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + g].WhDethNear = true;
+								/*if (Dox[i + z][j + g].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + g].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + g].BlDethNear = true;
+								/*if (Dox[i + z][j + g].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + g].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i + z][j + g].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j + g < 8 && j + g > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + g].WhDethNear = true;
+								/*if (Dox[i + z][j + g].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + g].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + g].BlDethNear = true;
+								/*if (Dox[i + z][j + g].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + g].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + g].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+					g++;
+				}
+				int h = -1;
+				for (int z = 1; i + z < 8 && j + h > -1; z++)
+				{
+					if (Dox[i + z][j + h].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j + h].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j + h].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j + h < 8 && j + h > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + h].WhDethNear = true;
+								/*if (Dox[i + z][j + h].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + h].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + h].BlDethNear = true;
+								/*if (Dox[i + z][j + h].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + h].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i + z][j + h].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j + h < 8 && j + h > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + h].WhDethNear = true;
+								/*if (Dox[i + z][j + h].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + h].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + h].BlDethNear = true;
+								/*if (Dox[i + z][j + h].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + h].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + h].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+					h--;
+				}
+				for (int z = 1; i + z < 8 && j + z < 8; z++)
+				{
+					if (Dox[i + z][j + z].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j + z].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j + z].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + z].WhDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + z].BlDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i + z][j + z].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j + z].WhDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j + z].BlDethNear = true;
+								/*if (Dox[i + z][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+				for (int z = -1; i + z > -1; z--)
+				{
+					if (Dox[i + z][j].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j < 8 && j > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j].WhDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j].BlDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i + z][j].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j < 8 && j > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j].WhDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j].BlDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+				for (int z = 1; i + z < 8; z++)
+				{
+					if (Dox[i + z][j].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j < 8 && j > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j].WhDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j].BlDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i + z][j].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j < 8 && j > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j].WhDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j].BlDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+				for (int z = 1; j + z < 8; z++)
+				{
+					if (Dox[i][j + z].color == 0 || Dox[i][j].color == 1 && Dox[i][j + z].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i][j + z].name == "WhKing.png")
+					{
+						if (i < 8 && i > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i][j + z].WhDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i][j + z].BlDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i][j + z].color != Box[i][j].color)
+					{
+						if (i < 8 && i > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i][j + z].WhDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i][j + z].BlDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+				for (int z = -1; j + z > -1; z--)
+				{
+					if (Dox[i][j + z].color == 0 || Dox[i][j].color == 1 && Dox[i][j + z].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i][j + z].name == "WhKing.png")
+					{
+						if (i < 8 && i > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i][j + z].WhDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i][j + z].BlDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i][j + z].color != Box[i][j].color)
+					{
+						if (i < 8 && i > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i][j + z].WhDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i][j + z].BlDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+			}
+			if (Dox[i][j].name == "WhKing.png" || Dox[i][j].name == "BlKing.png")
+			{
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i][j - 1].WhDethNear = true;
+					/*if (Dox[i][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i][j - 1].BlDethNear = true;
+					/*if (Dox[i][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i][j + 1].WhDethNear = true;
+					/*if (Dox[i][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i][j + 1].BlDethNear = true;
+					/*if (Dox[i][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i + 1][j + 1].WhDethNear = true;
+					/*if (Dox[i + 1][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i + 1][j + 1].BlDethNear = true;
+					/*if (Dox[i + 1][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i + 1][j - 1].WhDethNear = true;
+					/*if (Dox[i + 1][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i + 1][j - 1].BlDethNear = true;
+					/*if (Dox[i + 1][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i - 1][j - 1].WhDethNear = true;
+					/*if (Dox[i - 1][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i - 1][j - 1].BlDethNear = true;
+					/*if (Dox[i - 1][j - 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j - 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j - 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j - 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i - 1][j + 1].WhDethNear = true;
+					/*if (Dox[i - 1][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i - 1][j + 1].BlDethNear = true;
+					/*if (Dox[i - 1][j + 1].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j + 1].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j + 1].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j + 1].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i + 1][j].WhDethNear = true;
+					/*if (Dox[i + 1][j].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i + 1][j].BlDethNear = true;
+					/*if (Dox[i + 1][j].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i + 1][j].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i + 1][j].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i + 1][j].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+
+				if (Dox[i][j].color == 1)
+				{
+					Dox[i - 1][j].WhDethNear = true;
+					/*if (Dox[i - 1][j].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+				else if (Dox[i][j].color == -1)
+				{
+					Dox[i - 1][j].BlDethNear = true;
+					/*if (Dox[i - 1][j].name == "BlKing.png" && Dox[i][j].color == 1)
+					{
+						Dox[i - 1][j].attacker = Dox[i][j].sumKord;
+					}
+					else if (Dox[i - 1][j].name == "WhKing.png" && Dox[i][j].color == -1)
+					{
+						Dox[i - 1][j].attacker = Dox[i][j].sumKord;
+					}*/
+				}
+			}
+			if (Dox[i][j].name == "WhTower.png" || Dox[i][j].name == "BlTower.png")
+			{
+				for (int z = -1; i + z > -1; z--)
+				{
+					if (Dox[i + z][j].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j < 8 && j > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j].WhDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j].BlDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+
+					}
+					else// if (Box[i + z][j].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j < 8 && j > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j].WhDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j].BlDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+				for (int z = 1; i + z < 8; z++)
+				{
+					if (Dox[i + z][j].color == 0 || Dox[i][j].color == 1 && Dox[i + z][j].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i + z][j].name == "WhKing.png")
+					{
+						if (i + z < 8 && i + z > -1 && j < 8 && j > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j].WhDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j].BlDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i + z][j].color != Box[i][j].color)
+					{
+						if (i + z < 8 && i + z > -1 && j < 8 && j > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i + z][j].WhDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i + z][j].BlDethNear = true;
+								/*if (Dox[i + z][j].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i + z][j].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i + z][j].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+				for (int z = 1; j + z < 8; z++)
+				{
+					if (Dox[i][j + z].color == 0 || Dox[i][j].color == 1 && Dox[i][j + z].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i][j + z].name == "WhKing.png")
+					{
+						if (i < 8 && i > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i][j + z].WhDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i][j + z].BlDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i][j + z].color != Box[i][j].color)
+					{
+						if (i < 8 && i > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i][j + z].WhDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i][j + z].BlDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+				for (int z = -1; j + z > -1; z--)
+				{
+					if (Dox[i][j + z].color == 0 || Dox[i][j].color == 1 && Dox[i][j + z].name == "BlKing.png" || Dox[i][j].color == -1 && Dox[i][j + z].name == "WhKing.png")
+					{
+						if (i < 8 && i > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i][j + z].WhDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i][j + z].BlDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+					}
+					else// if (Box[i][j + z].color != Box[i][j].color)
+					{
+						if (i < 8 && i > -1 && j + z < 8 && j + z > -1)
+						{
+							if (Dox[i][j].color == 1)
+							{
+								Dox[i][j + z].WhDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+							else if (Dox[i][j].color == -1)
+							{
+								Dox[i][j + z].BlDethNear = true;
+								/*if (Dox[i][j + z].name == "BlKing.png" && Dox[i][j].color == 1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}
+								else if (Dox[i][j + z].name == "WhKing.png" && Dox[i][j].color == -1)
+								{
+									Dox[i][j + z].attacker = Dox[i][j].sumKord;
+								}*/
+							}
+						}
+						break;
+					}
+					/*else
+					{
+						break;
+					}*/
+				}
+			}
+		}
+	}
+}
+
+void Game::DeffShah()
+{
+	WhDeffCheck = false;
+	BlDeffCheck = false;
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < height; j++)
+		{
+			if (Box[i][j].name == "WhKing.png")
+			{
+				if (Box[i][j].BlDethNear)
+				{
+					WhDeffCheck = true;
+				}
+			}
+			else if (Box[i][j].name == "BlKing.png")
+			{
+				if (Box[i][j].WhDethNear)
+				{
+					BlDeffCheck = true;
+				}
+			}
+			//else
+			//{
+			//	for (int i = 0; i < height; i++)
+			//	{
+			//		for (int j = 0; j < length; j++)
+			//		{
+			//			Path[i][j].name = " ";
+			//		}
+			//	}
+			//}
+		}
+	}
+}
+
