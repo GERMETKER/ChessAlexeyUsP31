@@ -556,7 +556,7 @@ void Game::WrFigure()
 				}
 				else if (Box[i][j].name == "BlPuwn.png" || Box[i][j].name == "WhPuwn.png")
 				{
-					text.setString("Choose:\nPuwn");//задает строку тексту
+					text.setString("Choose:\nPawn");//задает строку тексту
 				}
 				else if (Box[i][j].name == "BlBishop.png" || Box[i][j].name == "WhBishop.png")
 				{
