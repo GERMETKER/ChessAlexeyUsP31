@@ -40,11 +40,9 @@ public:
 	bool BlCheckmate = false;
 	void WrPath();
 	void CrRedFrame(int i, int j);
-	bool IsDang(int xM, int yM, int xN, int yN);
-	void IsDeff();
-	void DeffShah();
 	void Menu(Vector2i mousePos);
 	void Pause(Vector2i mousePos);
+	void Return();
 private:
 
 };
